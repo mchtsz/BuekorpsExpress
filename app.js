@@ -15,7 +15,7 @@ app.use(
 );
 
 const insertStmt = db.prepare(
-  `INSERT INTO users (name, email, password) VALUES (?, ?, ?);`
+  `INSERT INTO users (name, email, rolle, password) VALUES (?, ?, ?, ?);`
 );
 
 app.get("/json/users", (req, res) => {
@@ -44,18 +44,39 @@ app.post("/login", (req, res) => {
   }
 });
 
+app.post("/adminLogin", (req, res) => {
+  const { email, password } = req.body;
+  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+
+  if (!user) {
+    res.status(401).send("Invalid email or password");
+    return;
+  }
+
+  const compare = bcrypt.compareSync(password, user.password);
+
+  if (compare) {
+    if (user.rolle === "admin") {
+      req.session.user = user;
+      res.send("Admin login successful");
+      res.redirect("/admin/edit/")
+    } else {
+      res.status(401).send("User is not an admin");
+    }
+  } else {
+    res.status(401).send("Invalid email or password");
+  }
+});
+
 // this is the route for the login page
 app.post("/addUser", (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, rolle, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (user) {
-    res.status(409).send("Email already exists");
+    res.status(409).send("Email already exists")
   } else {
-    const insertStmt = db.prepare(
-      `INSERT INTO users (name, email, rolle, password) VALUES (?, ?, ?, ?);`
-    );
     const hash = bcrypt.hashSync(password, 6);
-    insertStmt.run(name, email, "bruker", hash);
+    insertStmt.run(name, email, rolle, hash);
     setTimeout(() => {
       res.redirect("/");
     }, 1000);

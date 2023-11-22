@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="icon" type="image/png" href="../../images/user.svg">
+    <title>Create user</title>
+</head>
+
+<body>
+    <section>
+        <h1>Create user</h1>
+        <h4 id="adminMessage"></h4>
+        <form action="/addUser" method="POST">
+            <input type="text" name="name" id="" placeholder="name">
+            <input type="email" name="email" id="" placeholder="email">
+            <select id="" name="rolle">
+                <option value="">-- VELG ROLLE --</option>
+                <option value="admin" id="" name="rolle">admin</option>
+                <option value="leder" id="" name="rolle">leder</option>
+                <option value="medlem" id="" name="rolle">medlem</option>
+            </select>
+            <input type="password" name="password" id="" placeholder="password">
+            <input type="submit" value="Submit">
+        </form>
+        <h2>Want to login? go here <a href="../">LOGIN</a></h2>
+        <h3>OR, GO <a href="../../index.html">HOME</a></h3>
+    </section>
+</body>
+
+</html>
