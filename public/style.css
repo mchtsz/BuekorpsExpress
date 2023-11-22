@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+body,
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #333;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Style for forms */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+/* Custom styling for input */
+input {
+  padding: 1rem;
+  width: 500px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  background-color: #f2f2f2;
+}
+
+input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+/* Custom styling for title */
+h1 {
+  text-align: center;
+  font-size: 36px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+h2 {
+  color: #fff;
+  margin: 1rem 0;
+}
+
+h3 {
+  color: #fff;
+}
+
+p {
+  color: #fff;
+}
+
+img {
+  color: #fff;
+  width: 100px;
+  margin-bottom: 20px;
+  object-fit: cover;
+
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  height: 85vh;
+  gap: 2rem;
+}
+
+main a button {
+  background-color: #333;
+  color: white;
+  padding: 2rem;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-top: auto;
+}
+a {
+  color: #fff;
+  font-size: 24px;
+}
+
+section {
+  height: 80vh;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
