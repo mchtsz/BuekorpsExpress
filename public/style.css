@@ -113,7 +113,15 @@ section {
 
 table {
   width: 100%;
+  margin: 2rem 0;
   border-collapse: collapse;
+}
+
+#editBody {
+  display: flex;
+  padding: 0 2rem;
+  flex-direction: column;
+  justify-content: center;
 }
 
 table, th, td {
@@ -135,11 +143,13 @@ th, td {
 }
 
 .btn-warning {
-  background-color: #ffc107;
+  background-color: transparent;
+  border: 1px solid #fff;
 }
 
 .btn-danger {
-  background-color: #ff4000;
+  background-color: transparent;
+  border: 1px solid #fff;
 }
 
 select, option {

@@ -10,6 +10,14 @@
     <link rel="icon" type="image/png" href="../../images/user.svg">
 </head>
 
+<style>
+    form {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
 <script defer>
     fetch("/json/users")
         .then(res => res.json())
@@ -29,24 +37,32 @@
                 const email = document.createElement("td");
                 const rolle = document.createElement("td");
                 const actions = document.createElement("td");
+                const editUserA = document.createElement("a");
                 const editUser = document.createElement("button");
+                const deleteForm = document.createElement("form");
                 const deleteUser = document.createElement("button");
                 id.setAttribute("class", "id");
                 id.innerText = user.id;
                 name.innerText = user.name;
                 email.innerText = user.email;
                 rolle.innerText = user.rolle;
-                editUser.innerText = "Rediger";
+                editUserA.href = `/admin/edit/user/${user.id}`;
+                editUser.innerText = "✏️";
                 editUser.setAttribute("class", "btn btn-warning");
                 editUser.style.marginRight = "2.5%";
-                deleteUser.innerText = "Slett";
+                deleteForm.setAttribute("class", "form-class");
+                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+                deleteForm.setAttribute("method", "POST");
+                deleteUser.innerText = "🗑️";
                 deleteUser.setAttribute("class", "btn btn-danger");
                 tr.appendChild(id);
                 tr.appendChild(name);
                 tr.appendChild(email);
                 tr.appendChild(rolle);
-                actions.appendChild(editUser);
-                actions.appendChild(deleteUser);
+                editUserA.appendChild(editUser);
+                actions.appendChild(editUserA);
+                deleteForm.appendChild(deleteUser);
+                actions.appendChild(deleteForm);
                 tr.appendChild(actions);
                 document.getElementById("administratorBody").appendChild(tr);
             })
@@ -58,24 +74,32 @@
                 const email = document.createElement("td");
                 const rolle = document.createElement("td");
                 const actions = document.createElement("td");
+                const editUserA = document.createElement("a");
                 const editUser = document.createElement("button");
+                const deleteForm = document.createElement("form");
                 const deleteUser = document.createElement("button");
                 id.setAttribute("class", "id");
                 id.innerText = user.id;
                 name.innerText = user.name;
                 email.innerText = user.email;
                 rolle.innerText = user.rolle;
-                editUser.innerText = "Rediger";
+                editUserA.href = `/admin/edit/user/${user.id}`;
+                editUser.innerText = "✏️";
                 editUser.setAttribute("class", "btn btn-warning");
                 editUser.style.marginRight = "2.5%";
-                deleteUser.innerText = "Slett";
+                deleteForm.setAttribute("class", "form-class");
+                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+                deleteForm.setAttribute("method", "POST");
+                deleteUser.innerText = "🗑️";
                 deleteUser.setAttribute("class", "btn btn-danger");
                 tr.appendChild(id);
                 tr.appendChild(name);
                 tr.appendChild(email);
                 tr.appendChild(rolle);
-                actions.appendChild(editUser);
-                actions.appendChild(deleteUser);
+                editUserA.appendChild(editUser);
+                actions.appendChild(editUserA);
+                deleteForm.appendChild(deleteUser);
+                actions.appendChild(deleteForm);
                 tr.appendChild(actions);
                 document.getElementById("lederBody").appendChild(tr);
             })
@@ -89,17 +113,21 @@
                 const actions = document.createElement("td");
                 const editUserA = document.createElement("a");
                 const editUser = document.createElement("button");
+                const deleteForm = document.createElement("form");
                 const deleteUser = document.createElement("button");
                 id.setAttribute("class", "id");
                 id.innerText = user.id;
                 name.innerText = user.name;
                 email.innerText = user.email;
                 rolle.innerText = user.rolle;
-                editUserA.href = `/admin/rediger-bruker/${user.id}`;
-                editUser.innerText = "Rediger";
+                editUserA.href = `/admin/edit/user/${user.id}`;
+                editUser.innerText = "✏️";
                 editUser.setAttribute("class", "btn btn-warning");
                 editUser.style.marginRight = "2.5%";
-                deleteUser.innerText = "Slett";
+                deleteForm.setAttribute("class", "form-class");
+                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+                deleteForm.setAttribute("method", "POST");
+                deleteUser.innerText = "🗑️";
                 deleteUser.setAttribute("class", "btn btn-danger");
                 tr.appendChild(id);
                 tr.appendChild(name);
@@ -107,14 +135,15 @@
                 tr.appendChild(rolle);
                 editUserA.appendChild(editUser);
                 actions.appendChild(editUserA);
-                actions.appendChild(deleteUser);
+                deleteForm.appendChild(deleteUser);
+                actions.appendChild(deleteForm);
                 tr.appendChild(actions);
                 document.getElementById("medlemBody").appendChild(tr);
             })
         })
 </script>
 
-<body>
+<body id="editBody">
     <h3>
         Administratorer
     </h3>
