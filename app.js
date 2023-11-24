@@ -1,8 +1,9 @@
-const express = require('express');
+const express = require("express");
 const db = require("better-sqlite3")("database.db");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const app = express();
+const path = require("path");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
@@ -25,27 +26,6 @@ app.get("/json/users", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const user = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email);
-
-  if (!user) {
-    res.status(401).send("Invalid email or password");
-    return;
-  }
-
-  const compare = bcrypt.compareSync(password, user.password);
-
-  if (compare) {
-    req.session.user = user;
-    res.send("Login successful");
-  } else {
-    res.status(401).send("Invalid email or password");
-  }
-});
-
-app.post("/adminLogin", (req, res) => {
-  const { email, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
 
   if (!user) {
@@ -56,12 +36,11 @@ app.post("/adminLogin", (req, res) => {
   const compare = bcrypt.compareSync(password, user.password);
 
   if (compare) {
+    req.session.user = user;
     if (user.rolle === "admin") {
-      req.session.user = user;
-      res.send("Admin login successful");
-      res.redirect("/admin/edit/")
+      res.redirect("/admin/");
     } else {
-      res.status(401).send("User is not an admin");
+      res.redirect("/");
     }
   } else {
     res.status(401).send("Invalid email or password");
@@ -73,18 +52,14 @@ app.post("/addUser", (req, res) => {
   const { name, email, rolle, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (user) {
-    res.status(409).send("Email already exists")
+    res.status(409).send("Email already exists");
   } else {
     const hash = bcrypt.hashSync(password, 6);
     insertStmt.run(name, email, rolle, hash);
     setTimeout(() => {
-      res.redirect("/");
+      res.redirect("/admin/edit/");
     }, 1000);
   }
-});
-
-app.get("/admin/edit/user/:id", (req, res) => {
-  res.sendFile(__dirname + "/public/admin/edit/user/index.html");
 });
 
 app.post("/post/slettBruker/:id", (req, res) => {
@@ -124,6 +99,45 @@ app.post("/post/redigerBruker", (req, res) => {
   }
 
   res.redirect("/admin/edit");
+});
+
+app.use((req, res, next) => {
+  const id = req?.session?.user?.id;
+
+  if (!id) {
+    res.redirect("/");
+    return;
+  }
+  const selectStatement = db.prepare("SELECT * FROM users WHERE id = ?");
+  const user = selectStatement.get(id);
+
+  if (user.rolle === "admin") {
+    next();
+  } else {
+    res.redirect("/");
+  }
+}, express.static("admin"));
+
+app.get("/admin", (req, res) => {
+  if (req.session.user) {
+    res.sendFile(path.join(__dirname, "/admin/index.html"));
+  }
+});
+
+app.get("/admin/edit", (req, res) => {
+  res.sendFile(path.join(__dirname, "/admin/edit/index.html"));
+});
+
+app.get("/admin/create", (req, res) => {
+  res.sendFile(path.join(__dirname, "/admin/create/index.html"));
+});
+
+app.get("/admin/edit/user", (req, res) => {
+  res.sendFile(path.join(__dirname, "/admin/edit/user/index.html"));
+});
+
+app.get("/admin/edit/user/:id", (req, res) => {
+  res.sendFile(path.join(__dirname, `/admin/edit/user/index.html`));
 });
 
 app.listen(3000, () => {

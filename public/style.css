@@ -38,6 +38,8 @@ input[type="email"] {
 
 input[type="submit"] {
   background-color: #4caf50;
+  font-weight: 500;
+  font-size: 18px;
   color: white;
   cursor: pointer;
 }
@@ -46,8 +48,6 @@ input[type="submit"] {
 h1 {
   text-align: center;
   font-size: 36px;
-  margin-top: 50px;
-  margin-bottom: 20px;
   color: #fff;
 }
 
@@ -83,8 +83,16 @@ main {
   gap: 2rem;
 }
 
-main a button {
-  background-color: #333;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+}
+
+header a button {
+  background-color: transparent;
+  border: .2px solid #ccc;
   color: white;
   padding: 2rem;
   border-radius: 5px;
