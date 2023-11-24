@@ -38,7 +38,7 @@ app.post("/login", (req, res) => {
   if (compare) {
     req.session.user = user;
     if (user.rolle === "admin") {
-      res.redirect("/admin/");
+      res.redirect("/admin/edit/");
     } else {
       res.redirect("/");
     }
