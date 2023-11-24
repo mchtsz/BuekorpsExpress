@@ -1,12 +1,16 @@
 const express = require("express");
 const db = require("better-sqlite3")("database.db");
 const bcrypt = require("bcrypt");
+const bodyParser = require("body-parser");
 const session = require("express-session");
 const app = express();
 const path = require("path");
+const { start } = require("repl");
 
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(
   session({
     secret: "secret",
@@ -14,6 +18,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+
 
 const insertStmt = db.prepare(
   `INSERT INTO users (name, email, rolle, password) VALUES (?, ?, ?, ?);`
@@ -37,11 +42,21 @@ app.post("/login", (req, res) => {
 
   if (compare) {
     req.session.user = user;
-    if (user.rolle === "admin") {
-      res.redirect("/admin/edit/");
-    } else {
-      res.redirect("/");
+    switch (user.rolle) {
+      case "admin":
+        res.redirect("/admin/edit/");
+        break;
+      case "leder":
+        res.redirect("/leder/");
+        break;
+      case "medlem":
+        res.redirect("/medlem/");
+        break;
+      default:
+        res.redirect("/");
+        break;
     }
+
   } else {
     res.status(401).send("Invalid email or password");
   }
@@ -67,6 +82,10 @@ app.post("/post/slettBruker/:id", (req, res) => {
   const deleteStatement = db.prepare("DELETE FROM users WHERE id = ?");
   deleteStatement.run(id);
   res.redirect("/admin/edit");
+});
+
+app.get("/admin/edit/user/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/admin/edit/user/index.html");
 });
 
 app.post("/post/redigerBruker", (req, res) => {
@@ -102,6 +121,18 @@ app.post("/post/redigerBruker", (req, res) => {
 });
 
 app.use((req, res, next) => {
+  let auth = ""
+
+  if (req.url.startsWith("/admin")) {
+    auth = "admin"
+  } else if (req.url.startsWith("/leder")) { 
+    auth = "leder"
+  } else if (req.url.startsWith("/medlem")) {
+    auth = "medlem"
+  } else {
+    return next()
+  }
+
   const id = req?.session?.user?.id;
 
   if (!id) {
@@ -111,34 +142,15 @@ app.use((req, res, next) => {
   const selectStatement = db.prepare("SELECT * FROM users WHERE id = ?");
   const user = selectStatement.get(id);
 
-  if (user.rolle === "admin") {
+  if (user.rolle === auth) {
     next();
   } else {
     res.redirect("/");
   }
-}, express.static("admin"));
-
-app.get("/admin", (req, res) => {
-  if (req.session.user) {
-    res.sendFile(path.join(__dirname, "/admin/index.html"));
-  }
 });
 
-app.get("/admin/edit", (req, res) => {
-  res.sendFile(path.join(__dirname, "/admin/edit/index.html"));
-});
+app.use("/", express.static(path.join(__dirname, "public")));
 
-app.get("/admin/create", (req, res) => {
-  res.sendFile(path.join(__dirname, "/admin/create/index.html"));
-});
-
-app.get("/admin/edit/user", (req, res) => {
-  res.sendFile(path.join(__dirname, "/admin/edit/user/index.html"));
-});
-
-app.get("/admin/edit/user/:id", (req, res) => {
-  res.sendFile(path.join(__dirname, `/admin/edit/user/index.html`));
-});
 
 app.listen(3000, () => {
   console.log(`Server running on port 3000`);

@@ -90,7 +90,7 @@ main {
 main a {
   display: flex;
   background-color: rgb(48, 48, 45);
-  width: 500px;
+  width: 400px;
   height: 250px;
   justify-content: center;
   flex-direction: column;
