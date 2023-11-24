@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const app = express();
 const path = require("path");
-const { start } = require("repl");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,7 +17,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-
 
 const insertStmt = db.prepare(
   `INSERT INTO users (name, email, rolle, password) VALUES (?, ?, ?, ?);`
@@ -62,7 +60,6 @@ app.post("/login", (req, res) => {
   }
 });
 
-// this is the route for the login page
 app.post("/addUser", (req, res) => {
   const { name, email, rolle, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
