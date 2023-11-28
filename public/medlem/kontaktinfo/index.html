@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../style.css">
+    <title>Rediger kontaktinfo</title>
+</head>
+<body>
+    <h3>Rediger kontaktinfo</h3>
+    <form action="/post/redigerKontakt" method="POST">
+        <label>ID</label>
+        <input type="number" name="id" id="id" placeholder="ID" readonly />
+        <label>ROLLE</label>
+        <input type="text" name="rolle" id="rolle" placeholder="rolle" readonly />
+        <label>Fult navn</label>
+        <input type="text" name="name" id="name" placeholder="Fullt navn" />
+        <label>Email</label>
+        <input type="email" name="email" id="email" placeholder="Email" />
+        <input type="submit"></input>
+    </form>
+
+    <script >
+        const form = {
+            id: document.getElementById('id'),
+            rolle: document.getElementById('rolle'),
+            name: document.getElementById('name'),
+            email: document.getElementById('email')
+        }
+
+        async function getInfo() {
+            const res = await fetch('/api/user/token')
+            const data = await res.json()
+            form.id.value = data.data.id
+            form.rolle.value = data.data.rolle
+            form.name.value = data.data.name
+            form.email.value = data.data.email
+            console.log(data)
+        }
+        getInfo()
+    </script>
+</body>
+</html>

@@ -1,14 +1,19 @@
-const express = require("express");
-const db = require("better-sqlite3")("database.db");
-const bcrypt = require("bcrypt");
-const bodyParser = require("body-parser");
-const session = require("express-session");
+import express from "express"
+import Database from "better-sqlite3"
+import bcrypt from "bcrypt" 
+import bodyParser from "body-parser"
+import cookieParser from "cookie-parser"
+import session from "express-session"
+import path from "path"
+import crypto from "crypto"
+
 const app = express();
-const path = require("path");
+const db = new Database("database.db");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use(
   session({
@@ -19,8 +24,10 @@ app.use(
 );
 
 const insertStmt = db.prepare(
-  `INSERT INTO users (name, email, rolle, password) VALUES (?, ?, ?, ?);`
+  `INSERT INTO users (name, email, rolle, password, token) VALUES (?, ?, ?, ?, ?);`
 );
+
+const findByTokenStmt = db.prepare("SELECT * FROM users WHERE token = ?");
 
 app.get("/json/users", (req, res) => {
   const users = db.prepare("SELECT * FROM users").all();
@@ -29,7 +36,7 @@ app.get("/json/users", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email) as any
 
   if (!user) {
     res.status(401).send("Invalid email or password");
@@ -39,16 +46,16 @@ app.post("/login", (req, res) => {
   const compare = bcrypt.compareSync(password, user.password);
 
   if (compare) {
-    req.session.user = user;
+    res.cookie("token", user.token, { maxAge: 1000*60*60*24*7, httpOnly: true });
     switch (user.rolle) {
       case "admin":
         res.redirect("/admin/edit/");
         break;
       case "leder":
-        res.redirect("/leder/");
+        res.redirect(`/leder/`);
         break;
       case "medlem":
-        res.redirect("/medlem/");
+        res.redirect(`/medlem/`);
         break;
       default:
         res.redirect("/");
@@ -63,16 +70,18 @@ app.post("/login", (req, res) => {
 app.post("/addUser", (req, res) => {
   const { name, email, rolle, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+  const token = crypto.randomUUID()
+
   if (user) {
     res.status(409).send("Email already exists");
   } else {
     const hash = bcrypt.hashSync(password, 6);
-    insertStmt.run(name, email, rolle, hash);
+    insertStmt.run(name, email, rolle, hash, token);
     setTimeout(() => {
       res.redirect("/admin/edit/");
     }, 1000);
   }
-});
+}); 
 
 app.post("/post/slettBruker/:id", (req, res) => {
   const id = req.params.id;
@@ -85,8 +94,16 @@ app.get("/admin/edit/user/:id", (req, res) => {
   res.sendFile(__dirname + "/public/admin/edit/user/index.html");
 });
 
+app.get("/medlem/kontaktinfo/:token", (req, res) => {
+  const token = req.params.token;
+  const user = findByTokenStmt.get(token) as any
+  res.send(user)
+})
+
 app.post("/post/redigerBruker", (req, res) => {
-  const { id, name, email, rolle } = req.body;
+  const token = req.cookies.token;
+  console.log(token)
+  /* const { id, name, email, rolle } = req.body;
 
   const selectStatement = db.prepare("SELECT * FROM users WHERE id = ?");
   const user = selectStatement.get(id);
@@ -112,10 +129,32 @@ app.post("/post/redigerBruker", (req, res) => {
       );
       updateStatement.run(rolle, id);
     }
-  }
+  } */
 
   res.redirect("/admin/edit");
 });
+
+app.get("/api/user/token", (req, res) => {
+  const token = req.cookies.token;
+  const user = findByTokenStmt.get(token) as any
+  console.log(user, token)
+  if (user) {
+    res.json({
+      success: true,
+      data: user
+    })
+  } else {
+    res.json({
+      success: false
+    })
+  }
+})
+
+app.post("/post/redigerKontakt", (req, res) => {
+  const token = req.cookies.token;
+  const user = findByTokenStmt.get(token) as any
+  console.log(user, token)
+})
 
 app.use((req, res, next) => {
   let auth = ""
@@ -124,20 +163,20 @@ app.use((req, res, next) => {
     auth = "admin"
   } else if (req.url.startsWith("/leder")) { 
     auth = "leder"
-  } else if (req.url.startsWith("/medlem")) {
+  } else if (req.url.startsWith(`/medlem/`)) {
     auth = "medlem"
   } else {
     return next()
   }
 
-  const id = req?.session?.user?.id;
+  const token = req.cookies.token;
 
-  if (!id) {
+  if (!token) {
     res.redirect("/");
     return;
   }
-  const selectStatement = db.prepare("SELECT * FROM users WHERE id = ?");
-  const user = selectStatement.get(id);
+  const selectStatement = db.prepare("SELECT * FROM users WHERE token = ?");
+  const user = selectStatement.get(token) as any
 
   if (user.rolle === auth) {
     next();
