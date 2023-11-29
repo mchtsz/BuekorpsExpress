@@ -98,15 +98,8 @@ app.get("/admin/edit/user/:id", (req, res) => {
   res.sendFile(__dirname + "/public/admin/edit/user/index.html");
 });
 
-app.get("/medlem/kontaktinfo/:token", (req, res) => {
-  const token = req.params.token;
-  const user = findByTokenStmt.get(token) as any;
-  res.send(user);
-});
-
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
-  console.log(token);
   const { id, name, email, rolle } = req.body;
 
   const user = findByTokenStmt.get(token) as any;
@@ -140,7 +133,6 @@ app.post("/post/redigerBruker", (req, res) => {
 app.get("/api/user/token", (req, res) => {
   const token = req.cookies.token;
   const user = findByTokenStmt.get(token) as any;
-  console.log(user, token);
   if (user) {
     res.json({
       success: true,
