@@ -33,8 +33,9 @@
             name: document.getElementById('name'),
             email: document.getElementById('email'),
             phone: document.getElementById('phone'),
+            adress: document.getElementById('adress'),
             birthdate: document.getElementById('birthdate'),
-            adress: document.getElementById('adress')
+            
         }
 
         async function getInfo() {
@@ -45,9 +46,8 @@
             form.name.value = data.data.name
             form.email.value = data.data.email
             form.phone.value = data.data.phone
-            form.birthdate.value = data.data.birthdate
             form.adress.value = data.data.adress
-            console.log(data)
+            form.birthdate.value = data.data.birthdate
         }
         getInfo()
     </script>
