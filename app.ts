@@ -24,7 +24,7 @@ app.use(
 );
 
 const insertStmt = db.prepare(
-  `INSERT INTO users (name, email, rolle, password, token) VALUES (?, ?, ?, ?, ?);`
+  `INSERT INTO users (name, email, rolle, password, token, phone, adress, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
 );
 
 const findByTokenStmt = db.prepare("SELECT * FROM users WHERE token = ?");
@@ -76,7 +76,7 @@ app.post("/addUser", (req, res) => {
     res.status(409).send("Email already exists");
   } else {
     const hash = bcrypt.hashSync(password, 6);
-    insertStmt.run(name, email, rolle, hash, token);
+    insertStmt.run(name, email, rolle, hash, token, "", "", "");
     setTimeout(() => {
       res.redirect("/admin/edit/");
     }, 1000);
@@ -103,10 +103,9 @@ app.get("/medlem/kontaktinfo/:token", (req, res) => {
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
   console.log(token)
-  /* const { id, name, email, rolle } = req.body;
+   const { id, name, email, rolle } = req.body;
 
-  const selectStatement = db.prepare("SELECT * FROM users WHERE id = ?");
-  const user = selectStatement.get(id);
+  const user = findByTokenStmt.get(token) as any
 
   if (name != user.name) {
     const updateStatement = db.prepare(
@@ -129,7 +128,7 @@ app.post("/post/redigerBruker", (req, res) => {
       );
       updateStatement.run(rolle, id);
     }
-  } */
+  } 
 
   res.redirect("/admin/edit");
 });
@@ -153,7 +152,44 @@ app.get("/api/user/token", (req, res) => {
 app.post("/post/redigerKontakt", (req, res) => {
   const token = req.cookies.token;
   const user = findByTokenStmt.get(token) as any
-  console.log(user, token)
+
+  const { id, name, email, phone, birthdate, adress } = req.body;
+
+  if (name != user.name) {
+    const updateStatement = db.prepare(
+      "UPDATE users SET name = ? WHERE id = ?"
+    );
+    updateStatement.run(name, id);
+  }
+
+  if (email != user.email) {
+    const updateStatement = db.prepare(
+      "UPDATE users SET email = ? WHERE id = ?"
+    );
+    updateStatement.run(email, id);
+  }
+
+  if (phone != user.phone) {
+    const updateStatement = db.prepare(
+      "UPDATE users SET phone = ? WHERE id = ?"
+    );
+    updateStatement.run(phone, id);
+  }
+
+  if (birthdate != user.birthdate) {
+    const updateStatement = db.prepare(
+      "UPDATE users SET birthdate = ? WHERE id = ?"
+    );
+    updateStatement.run(birthdate, id);
+  }
+
+  if (adress != user.adress) {
+    const updateStatement = db.prepare(
+      "UPDATE users SET adress = ? WHERE id = ?"
+    );
+    updateStatement.run(adress, id);
+  }
+  res.redirect("/medlem/");
 })
 
 app.use((req, res, next) => {
@@ -175,8 +211,7 @@ app.use((req, res, next) => {
     res.redirect("/");
     return;
   }
-  const selectStatement = db.prepare("SELECT * FROM users WHERE token = ?");
-  const user = selectStatement.get(token) as any
+  const user = findByTokenStmt.get(token) as any
 
   if (user.rolle === auth) {
     next();

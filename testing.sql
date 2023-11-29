@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL,
     rolle TEXT NOT NULL,
     token TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    adress TEXT NOT NULL,
+    birthdate TEXT NOT NULL,
     password TEXT NOT NULL
 );
 

@@ -129,9 +129,19 @@ a {
 }
 
 section {
+  display: flex;
+  align-items: center;
+}
+
+#indexSection {
   height: 80vh;
   flex-direction: column;
-  display: flex;
+  justify-content: center;
+}
+
+#createSection {
+  height: 80vh;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
