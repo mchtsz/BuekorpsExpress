@@ -11,8 +11,8 @@
 
 <body>  
     <section>
-        <h3>Rediger bruker</h3>
         <form action="/post/redigerBruker" method="POST" id="editingForm">
+            <h1>Generelt</h1>
             <label>ID</label>
             <input type="number" name="id" id="id" placeholder="ID" readonly />
             <label>Fult navn</label>
@@ -27,15 +27,26 @@
                 <option value="medlem">Medlem</option>
                 </script>
             </select>
+            <h1>Kontaktinfo</h1>
+            <label>Telefon</label>
+            <input type="tel" name="phone" id="phone" placeholder="Telefon" />
+            <label>Adresse</label>
+            <input type="text" name="adress" id="adress" placeholder="Adresse" />
+            <label>Fødselsdato</label>
+            <input type="date" name="birthdate" id="birthdate" placeholder="Fødselsdato" />
             <input type="submit"></input>
         </form>
+        <a href="../">
+            <img src="../../../images/arrow-left.svg" alt="arrow-left">
+            Gå tilbake
+        </a>
     </section>
 </body>
 
 </html>
 
 <script defer>
-    const userId = window.location.pathname.split("/").pop();
+        const userId = window.location.pathname.split("/").pop();
     fetch("/json/users")
         .then((res) => res.json())
         .then((data) => {
@@ -44,5 +55,8 @@
             document.getElementById("name").value = user.name;
             document.getElementById("email").value = user.email;
             document.getElementById("rolle").value = user.rolle;
+            document.getElementById("phone").value = user.phone;
+            document.getElementById("adress").value = user.adress;
+            document.getElementById("birthdate").value = user.birthdate;
         });
 </script>

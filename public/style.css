@@ -17,6 +17,7 @@ body {
 form {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding: 2rem;
   gap: 1.5rem;
@@ -26,6 +27,18 @@ label {
   font-size: 18px;
 }
 
+#editingForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+#editingForm h1 {
+  margin: 1rem;
+  text-decoration: underline;
+}
 /* Custom styling for input */
 input {
   padding: 1rem;
@@ -154,6 +167,18 @@ section {
   align-items: center;
   flex-direction: column;
   justify-content: center;
+}
+
+section a {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+}
+
+section a img {
+  width: 60px;
+  margin: 1rem 0;
 }
 
 #indexSection {

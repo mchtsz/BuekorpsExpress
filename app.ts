@@ -52,15 +52,16 @@ app.post("/login", (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       httpOnly: true,
     });
+
     switch (user.rolle) {
       case "admin":
         res.redirect("/admin/");
         break;
       case "leder":
-        res.redirect(`/leder/`);
+        res.redirect("/leder/");
         break;
       case "medlem":
-        res.redirect(`/medlem/`);
+        res.redirect("/medlem/");
         break;
       default:
         res.redirect("/");
@@ -100,31 +101,42 @@ app.get("/admin/edit/user/:id", (req, res) => {
 
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
-  const { id, name, email, rolle } = req.body;
+  const { id, name, email, rolle, phone, adress, birthdate } = req.body;
 
   const user = findByTokenStmt.get(token) as any;
 
   if (name != user.name) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET name = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET name = ? WHERE id = ?");
     updateStmt.run(name, id);
   }
 
   if (email != user.email) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET email = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET email = ? WHERE id = ?");
     updateStmt.run(email, id);
   }
 
   if (rolle != user.rolle) {
     if (rolle != "velg") {
-      const updateStmt = db.prepare(
-        "UPDATE users SET rolle = ? WHERE id = ?"
-      );
+      const updateStmt = db.prepare("UPDATE users SET rolle = ? WHERE id = ?");
       updateStmt.run(rolle, id);
     }
+  }
+
+  if (phone != user.phone) {
+    const updateStmt = db.prepare("UPDATE users SET phone = ? WHERE id = ?");
+    updateStmt.run(phone, id);
+  }
+
+  if (birthdate != user.birthdate) {
+    const updateStmt = db.prepare(
+      "UPDATE users SET birthdate = ? WHERE id = ?"
+    );
+    updateStmt.run(birthdate, id);
+  }
+
+  if (adress != user.adress) {
+    const updateStmt = db.prepare("UPDATE users SET adress = ? WHERE id = ?");
+    updateStmt.run(adress, id);
   }
 
   res.redirect("/admin/edit");
@@ -152,23 +164,17 @@ app.post("/post/redigerKontakt", (req, res) => {
   const { id, name, email, phone, birthdate, adress } = req.body;
 
   if (name != user.name) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET name = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET name = ? WHERE id = ?");
     updateStmt.run(name, id);
   }
 
   if (email != user.email) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET email = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET email = ? WHERE id = ?");
     updateStmt.run(email, id);
   }
 
   if (phone != user.phone) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET phone = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET phone = ? WHERE id = ?");
     updateStmt.run(phone, id);
   }
 
@@ -180,13 +186,24 @@ app.post("/post/redigerKontakt", (req, res) => {
   }
 
   if (adress != user.adress) {
-    const updateStmt = db.prepare(
-      "UPDATE users SET adress = ? WHERE id = ?"
-    );
+    const updateStmt = db.prepare("UPDATE users SET adress = ? WHERE id = ?");
     updateStmt.run(adress, id);
   }
 
-  res.redirect("/medlem/");
+  switch (user.rolle) {
+    case "admin":
+      res.redirect("/admin/");
+      break;
+    case "leder":
+      res.redirect(`/leder/`);
+      break;
+    case "medlem":
+      res.redirect(`/medlem/`);
+      break;
+    default:
+      res.redirect("/");
+      break;
+  }
 });
 
 app.use((req, res, next) => {
