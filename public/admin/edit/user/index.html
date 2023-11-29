@@ -41,22 +41,22 @@
             Gå tilbake
         </a>
     </section>
+    
+    <script defer>
+        const userId = window.location.pathname.split("/").pop();
+        fetch("/json/users")
+            .then((res) => res.json())
+            .then((data) => {
+                const user = data.find((user) => user.id == userId);
+                document.getElementById("id").value = user.id;
+                document.getElementById("name").value = user.name;
+                document.getElementById("email").value = user.email;
+                document.getElementById("rolle").value = user.rolle;
+                document.getElementById("phone").value = user.phone;
+                document.getElementById("adress").value = user.adress;
+                document.getElementById("birthdate").value = user.birthdate;
+            });
+    </script>
 </body>
 
 </html>
-
-<script defer>
-        const userId = window.location.pathname.split("/").pop();
-    fetch("/json/users")
-        .then((res) => res.json())
-        .then((data) => {
-            const user = data.find((user) => user.id == userId);
-            document.getElementById("id").value = user.id;
-            document.getElementById("name").value = user.name;
-            document.getElementById("email").value = user.email;
-            document.getElementById("rolle").value = user.rolle;
-            document.getElementById("phone").value = user.phone;
-            document.getElementById("adress").value = user.adress;
-            document.getElementById("birthdate").value = user.birthdate;
-        });
-</script>
