@@ -7,24 +7,26 @@
     <title>Rediger kontaktinfo</title>
 </head>
 <body>
-    <h3>Rediger kontaktinfo</h3>
-    <form action="/post/redigerKontakt" method="POST">
-        <label>ID</label>
-        <input type="number" name="id" id="id" placeholder="ID" readonly />
-        <label>ROLLE</label>
-        <input type="text" name="rolle" id="rolle" placeholder="rolle" readonly />
-        <label>Fult navn</label>
-        <input type="text" name="name" id="name" placeholder="Fullt navn" />
-        <label>Email</label>
-        <input type="email" name="email" id="email" placeholder="Email" />
-        <label>Telefon</label>
-        <input type="tel" name="phone" id="phone" placeholder="Telefon" />
-        <label>Fødselsdato</label>
-        <input type="date" name="birthdate" id="birthdate" placeholder="Fødselsdato" />
-        <label>Adresse</label>
-        <input type="text" name="adress" id="adress" placeholder="Adresse" />
-        <input type="submit"></input>
-    </form>
+    <section id="kontaktinfoSection">
+        <h3>Rediger kontaktinfo</h3>
+        <form action="/post/redigerKontakt" method="POST">
+            <label>ID</label>
+            <input type="number" name="id" id="id" placeholder="ID" readonly />
+            <label>ROLLE</label>
+            <input type="text" name="rolle" id="rolle" placeholder="rolle" readonly />
+            <label>Fult navn</label>
+            <input type="text" name="name" id="name" placeholder="Fullt navn" />
+            <label>Email</label>
+            <input type="email" name="email" id="email" placeholder="Email" />
+            <label>Telefon</label>
+            <input type="tel" name="phone" id="phone" placeholder="Telefon" />
+            <label>Fødselsdato</label>
+            <input type="date" name="birthdate" id="birthdate" placeholder="Fødselsdato" />
+            <label>Adresse</label>
+            <input type="text" name="adress" id="adress" placeholder="Adresse" />
+            <input type="submit"></input>
+        </form>
+    </section>
 
     <script >
         const form = {

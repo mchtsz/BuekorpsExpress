@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 
 body,
 * {
@@ -10,7 +10,7 @@ body,
 body {
   background-color: #333;
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Style for forms */
@@ -29,11 +29,10 @@ input {
   border: none;
   border-radius: 5px;
   font-size: 16px;
-}
-input[type="text"],
-input[type="password"],
-input[type="email"] {
   background-color: #f2f2f2;
+}
+input:read-only {
+  background-color: #ccc;
 }
 
 input[type="submit"] {
@@ -76,7 +75,6 @@ img {
   width: 100px;
   margin-bottom: 20px;
   object-fit: cover;
-
 }
 
 main {
@@ -109,7 +107,7 @@ header {
 
 header a button {
   background-color: transparent;
-  border: .2px solid #ccc;
+  border: 0.2px solid #ccc;
   color: white;
   padding: 2rem;
   border-radius: 5px;
@@ -131,19 +129,20 @@ a {
 section {
   display: flex;
   align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #indexSection {
   height: 80vh;
-  flex-direction: column;
-  justify-content: center;
 }
 
 #createSection {
   height: 80vh;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+}
+
+#kontaktinfoSection {
+  height: 90vh;
 }
 
 table {
@@ -159,11 +158,14 @@ table {
   justify-content: center;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid white;
 }
 
-th, td {
+th,
+td {
   padding: 15px;
   text-align: left;
 }
@@ -187,7 +189,8 @@ th, td {
   border: 1px solid #fff;
 }
 
-select, option {
+select,
+option {
   width: 500px;
   height: 50px;
   font-size: 16px;
