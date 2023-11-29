@@ -167,6 +167,11 @@ section {
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
+}
+
+#indexSection {
+  height: 100vh;
 }
 
 section a {
@@ -180,18 +185,6 @@ section a {
 section a img {
   width: 60px;
   margin: 1rem 0;
-}
-
-#indexSection {
-  height: 80vh;
-}
-
-#createSection {
-  height: 80vh;
-}
-
-#kontaktinfoSection {
-  height: 90vh;
 }
 
 table {
