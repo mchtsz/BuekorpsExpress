@@ -34,6 +34,11 @@ app.get("/json/users", (req, res) => {
   res.send(users);
 });
 
+app.get("/json/kompani/users", (req, res) => {
+  const users = db.prepare("SELECT * FROM users WHERE rolle = 'medlem'").all();
+  res.send(users);
+});
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = db
@@ -99,6 +104,10 @@ app.get("/admin/edit/user/:id", (req, res) => {
   res.sendFile(__dirname + "/public/admin/edit/user/index.html");
 });
 
+app.get("/leder/edit/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/edit/index.html");
+});
+
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
   const { id, name, email, rolle, phone, adress, birthdate } = req.body;
@@ -140,6 +149,42 @@ app.post("/post/redigerBruker", (req, res) => {
   }
 
   res.redirect("/admin/edit");
+});
+
+app.post("/post/redigerMedlem", (req, res) => {
+  const token = req.cookies.token;
+  const { id, name, email, phone, adress, birthdate } = req.body;
+
+  const user = findByTokenStmt.get(token) as any;
+
+  if (name != user.name) {
+    const updateStmt = db.prepare("UPDATE users SET name = ? WHERE id = ?");
+    updateStmt.run(name, id);
+  }
+
+  if (email != user.email) {
+    const updateStmt = db.prepare("UPDATE users SET email = ? WHERE id = ?");
+    updateStmt.run(email, id);
+  }
+
+  if (phone != user.phone) {
+    const updateStmt = db.prepare("UPDATE users SET phone = ? WHERE id = ?");
+    updateStmt.run(phone, id);
+  }
+
+  if (birthdate != user.birthdate) {
+    const updateStmt = db.prepare(
+      "UPDATE users SET birthdate = ? WHERE id = ?"
+    );
+    updateStmt.run(birthdate, id);
+  }
+
+  if (adress != user.adress) {
+    const updateStmt = db.prepare("UPDATE users SET adress = ? WHERE id = ?");
+    updateStmt.run(adress, id);
+  }
+
+  res.redirect("/leder/");
 });
 
 app.get("/api/user/token", (req, res) => {
@@ -208,6 +253,14 @@ app.post("/post/redigerKontakt", (req, res) => {
 
 app.use((req, res, next) => {
   let auth = "";
+  const token = req.cookies.token;
+  const user = findByTokenStmt.get(token) as any;
+
+  const userRole = user.rolle;
+
+  if (userRole === 'admin') {
+    return next();
+  }
 
   if (req.url.startsWith("/admin")) {
     auth = "admin";
@@ -219,15 +272,11 @@ app.use((req, res, next) => {
     return next();
   }
 
-  const token = req.cookies.token;
-
   if (!token) {
     res.redirect("/");
-    return;
   }
-  const user = findByTokenStmt.get(token) as any;
 
-  if (user.rolle === auth) {
+  if (userRole === auth) {
     next();
   } else {
     res.redirect("/");

@@ -8,12 +8,9 @@
 </head>
 <body>
     <section id="kontaktinfoSection">
-        <h2>Rediger kontaktinfo</h2>
         <form action="/post/redigerKontakt" method="POST">
-            <label>ID</label>
-            <input type="number" name="id" id="id" placeholder="ID" readonly />
-            <label>ROLLE</label>
-            <input type="text" name="rolle" id="rolle" placeholder="rolle" readonly />
+            <input type="hidden" name="id" id="id" />
+            <input type="hidden" name="rolle" id="rolle" />
             <label>Fult navn</label>
             <input type="text" name="name" id="name" placeholder="Fullt navn" />
             <label>Email</label>

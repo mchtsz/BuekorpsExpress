@@ -12,28 +12,39 @@
 <body>  
     <section>
         <form action="/post/redigerBruker" method="POST" id="editingForm">
-            <h1>Generelt</h1>
-            <label>ID</label>
-            <input type="number" name="id" id="id" placeholder="ID" readonly />
-            <label>Fult navn</label>
-            <input type="text" name="name" id="name" placeholder="Fullt navn" />
-            <label>Email</label>
-            <input type="email" name="email" id="email" placeholder="Email" />
-            <label>Velg rolle</label>
-            <select name="rolle" id="rolle">
-                <option selected value="velg">Velg en rolle...</option>
-                <option value="admin">Admin</option>
-                <option value="leder">Leder</option>
-                <option value="medlem">Medlem</option>
-                </script>
-            </select>
-            <h1>Kontaktinfo</h1>
-            <label>Telefon</label>
-            <input type="tel" name="phone" id="phone" placeholder="Telefon" />
-            <label>Adresse</label>
-            <input type="text" name="adress" id="adress" placeholder="Adresse" />
-            <label>Fødselsdato</label>
-            <input type="date" name="birthdate" id="birthdate" placeholder="Fødselsdato" />
+            <aside>
+                <div>
+                    <h1>Generelt</h1>
+                    <label>ID</label>
+                    <input type="number" name="id" id="id" placeholder="ID" readonly />
+
+                    <label>Fult navn</label>
+                    <input type="text" name="name" id="name" placeholder="Fullt navn" />
+
+                    <label>Email</label>
+                    <input type="email" name="email" id="email" placeholder="Email" />
+
+                    <label>Velg rolle</label>
+                    <select name="rolle" id="rolle">
+                        <option selected value="velg">Velg en rolle...</option>
+                        <option value="admin">Admin</option>
+                        <option value="leder">Leder</option>
+                        <option value="medlem">Medlem</option>
+                    </select>
+                </div>
+                <div>
+                    <h1>Kontaktinfo</h1>
+
+                    <label>Telefon</label>
+                    <input type="tel" name="phone" id="phone" placeholder="Telefon" />
+
+                    <label>Adresse</label>
+                    <input type="text" name="adress" id="adress" placeholder="Adresse" />
+
+                    <label>Fødselsdato</label>
+                    <input type="date" name="birthdate" id="birthdate" placeholder="Fødselsdato" />
+                </div>
+            </aside>
             <input type="submit"></input>
         </form>
         <a href="../">
