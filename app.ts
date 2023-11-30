@@ -254,13 +254,29 @@ app.post("/post/redigerKontakt", (req, res) => {
 app.use((req, res, next) => {
   let auth = "";
   const token = req.cookies.token;
-  const user = findByTokenStmt.get(token) as any;
 
-  const userRole = user.rolle;
-
-  if (userRole === 'admin') {
+  // Skip middleware for the index page and static files
+  if (req.url === "/" || req.url === "/index.html" || req.url.endsWith(".css") || req.url.endsWith(".js")) {
     return next();
   }
+
+  // if the user has no token, redirect to the index page
+  if (!token) {
+    res.redirect("/");
+    return;
+  }
+
+
+  const user = findByTokenStmt.get(token) as any;
+
+  if (!user) {
+    res.redirect("/");
+    return;
+  }
+
+  if (user.rolle === 'admin') {
+    return next();
+  } 
 
   if (req.url.startsWith("/admin")) {
     auth = "admin";
@@ -272,11 +288,7 @@ app.use((req, res, next) => {
     return next();
   }
 
-  if (!token) {
-    res.redirect("/");
-  }
-
-  if (userRole === auth) {
+  if (user.rolle === auth) {
     next();
   } else {
     res.redirect("/");
@@ -286,5 +298,5 @@ app.use((req, res, next) => {
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.listen(3000, () => {
-  console.log(`Server running on port 3000`);
+  console.log(`Server running on http://localhost:3000`);
 });
