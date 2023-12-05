@@ -27,15 +27,12 @@ const insertStmt = db.prepare(
   `INSERT INTO users (name, email, rolle, password, token, phone, adress, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
 );
 
+const createStmt = db.prepare(`INSERT INTO peletong (name) VALUES (?);`);
+
 const findByTokenStmt = db.prepare("SELECT * FROM users WHERE token = ?");
 
 app.get("/json/users", (req, res) => {
   const users = db.prepare("SELECT * FROM users").all();
-  res.send(users);
-});
-
-app.get("/json/kompani/users", (req, res) => {
-  const users = db.prepare("SELECT * FROM users WHERE rolle = 'medlem'").all();
   res.send(users);
 });
 
@@ -91,6 +88,14 @@ app.post("/addUser", (req, res) => {
       res.redirect("/admin/edit/");
     }, 1000);
   }
+});
+
+app.post("/createPeletong", (req, res) => {
+  const { name } = req.body;
+  createStmt.run(name);
+  setTimeout(() => {
+    res.redirect("/admin/");
+  }, 1000);
 });
 
 app.post("/post/slettBruker/:id", (req, res) => {
@@ -184,7 +189,7 @@ app.post("/post/redigerMedlem", (req, res) => {
     updateStmt.run(adress, id);
   }
 
-  res.redirect("/leder/");
+  res.redirect("/leder/kompani");
 });
 
 app.get("/api/user/token", (req, res) => {
@@ -256,7 +261,12 @@ app.use((req, res, next) => {
   const token = req.cookies.token;
 
   // Skip middleware for the index page and static files
-  if (req.url === "/" || req.url === "/index.html" || req.url.endsWith(".css") || req.url.endsWith(".js")) {
+  if (
+    req.url === "/" ||
+    req.url === "/index.html" ||
+    req.url.endsWith(".css") ||
+    req.url.endsWith(".js")
+  ) {
     return next();
   }
 
@@ -266,7 +276,6 @@ app.use((req, res, next) => {
     return;
   }
 
-
   const user = findByTokenStmt.get(token) as any;
 
   if (!user) {
@@ -274,9 +283,9 @@ app.use((req, res, next) => {
     return;
   }
 
-  if (user.rolle === 'admin') {
+  if (user.rolle === "admin") {
     return next();
-  } 
+  }
 
   if (req.url.startsWith("/admin")) {
     auth = "admin";

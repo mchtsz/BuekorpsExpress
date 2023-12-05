@@ -226,8 +226,23 @@ table {
   padding: 0 2rem;
   flex-direction: column;
   justify-content: center;
+  overflow-x: hidden;
 }
 
+#editBody #eBtn {
+  transition: 0.2s ease-in-out;
+  text-align: center;
+  color: #fff;
+  font-size: 40px;
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+#editBody #eBtn:hover {
+  transform: scale(1.6);
+  overflow-x: hidden;
+  color: #fff;
+}
 table,
 th,
 td {

@@ -7,9 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
     phone TEXT NOT NULL,
     adress TEXT NOT NULL,
     birthdate TEXT NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    peletong_id INTEGER,
+    FOREIGN KEY(peletong_id) REFERENCES peletong(id)
 );
-
 CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -17,19 +18,14 @@ CREATE TABLE IF NOT EXISTS posts (
     user_id INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
-
-CREATE TABLE IF NOT EXISTS kompanier (
+CREATE TABLE IF NOT EXISTS kompani (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    navn TEXT NOT NULL
+    name TEXT NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS peletonger (
+CREATE TABLE IF NOT EXISTS peletong (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    navn TEXT NOT NULL,
-    kompani_id INTEGER NOT NULL,
-    FOREIGN KEY(kompani_id) REFERENCES kompanier(id)
+    name TEXT NOT NULL
 );
-
 
 CREATE TABLE IF NOT EXISTS foreldre (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +33,6 @@ CREATE TABLE IF NOT EXISTS foreldre (
     email TEXT NOT NULL,
     password TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS foreldre_medlemmer (
     forelder_id INTEGER NOT NULL,
     medlem_id INTEGER NOT NULL,

@@ -1,201 +1,201 @@
-
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit users</title>
-    <link rel="stylesheet" href="../../style.css">
-    <link rel="icon" type="image/png" href="../../images/user-info.svg">
-</head>
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="icon" type="image/png" href="../../images/user-info.svg" />
+  </head>
 
-<style>
+  <style>
     form {
-        display: inline-block;
-        padding: 0;
-        margin: 0;
+      display: inline-block;
+      padding: 0;
+      margin: 0;
     }
-</style>
+    #link {
+        position: absolute;
+        bottom: 0;
+        left: 45%;
+        right: 45%;
+        display: flex;
+        flex-direction: row;
+        width: 350px;
+        align-items: center;
+        text-decoration: none;
+        color: #fff;
+    }
+  </style>
 
-<script defer>
+  <script defer>
     fetch("/json/users")
-        .then(res => res.json())
-        .then(data => {
-            const admins = data.filter(user => user.rolle === "admin");
-            const ledere = data.filter(user => user.rolle === "leder");
-            const medlemmer = data.filter(user => user.rolle === "medlem");
+      .then((res) => res.json())
+      .then((data) => {
+        const admins = data.filter((user) => user.rolle === "admin");
+        const ledere = data.filter((user) => user.rolle === "leder");
+        const medlemmer = data.filter((user) => user.rolle === "medlem");
 
-            admins.sort((a, b) => a.id - b.id);
-            ledere.sort((a, b) => a.id - b.id);
-            medlemmer.sort((a, b) => a.id - b.id);
+        admins.sort((a, b) => a.id - b.id);
+        ledere.sort((a, b) => a.id - b.id);
+        medlemmer.sort((a, b) => a.id - b.id);
 
-            admins.forEach(user => {
-                const tr = document.createElement("tr");
-                const id = document.createElement("td");
-                const name = document.createElement("td");
-                const email = document.createElement("td");
-                const rolle = document.createElement("td");
-                const actions = document.createElement("td");
-                const editUserA = document.createElement("a");
-                const editUser = document.createElement("button");
-                const deleteForm = document.createElement("form");
-                const deleteUser = document.createElement("button");
-                id.setAttribute("class", "id");
-                id.innerText = user.id;
-                name.innerText = user.name;
-                email.innerText = user.email;
-                rolle.innerText = user.rolle;
-                editUserA.href = `/admin/edit/user/${user.id}`;
-                editUser.innerText = "✏️";
-                editUser.setAttribute("class", "btn btn-warning");
-                editUser.style.marginRight = "2.5%";
-                deleteForm.setAttribute("class", "form-class");
-                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
-                deleteForm.setAttribute("method", "POST");
-                deleteUser.innerText = "🗑️";
-                deleteUser.setAttribute("class", "btn btn-danger");
-                tr.appendChild(id);
-                tr.appendChild(name);
-                tr.appendChild(email);
-                tr.appendChild(rolle);
-                editUserA.appendChild(editUser);
-                actions.appendChild(editUserA);
-                deleteForm.appendChild(deleteUser);
-                actions.appendChild(deleteForm);
-                tr.appendChild(actions);
-                document.getElementById("administratorBody").appendChild(tr);
-            })
+        admins.forEach((user) => {
+          const tr = document.createElement("tr");
+          const id = document.createElement("td");
+          const name = document.createElement("td");
+          const email = document.createElement("td");
+          const rolle = document.createElement("td");
+          const actions = document.createElement("td");
+          const editUserA = document.createElement("a");
+          const editUser = document.createElement("button");
+          const deleteForm = document.createElement("form");
+          const deleteUser = document.createElement("button");
+          id.setAttribute("class", "id");
+          id.innerText = user.id;
+          name.innerText = user.name;
+          email.innerText = user.email;
+          rolle.innerText = user.rolle;
+          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUser.innerText = "✏️";
+          editUser.setAttribute("class", "btn btn-warning");
+          editUser.style.marginRight = "2.5%";
+          deleteForm.setAttribute("class", "form-class");
+          deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+          deleteForm.setAttribute("method", "POST");
+          deleteForm.style.padding = "0";
+          deleteUser.innerText = "🗑️";
+          deleteUser.setAttribute("class", "btn btn-danger");
+          tr.appendChild(id);
+          tr.appendChild(name);
+          tr.appendChild(email);
+          tr.appendChild(rolle);
+          editUserA.appendChild(editUser);
+          actions.appendChild(editUserA);
+          deleteForm.appendChild(deleteUser);
+          actions.appendChild(deleteForm);
+          tr.appendChild(actions);
+          document.getElementById("administratorBody").appendChild(tr);
+        });
 
-            ledere.forEach(user => {
-                const tr = document.createElement("tr");
-                const id = document.createElement("td");
-                const name = document.createElement("td");
-                const email = document.createElement("td");
-                const rolle = document.createElement("td");
-                const actions = document.createElement("td");
-                const editUserA = document.createElement("a");
-                const editUser = document.createElement("button");
-                const deleteForm = document.createElement("form");
-                const deleteUser = document.createElement("button");
-                id.setAttribute("class", "id");
-                id.innerText = user.id;
-                name.innerText = user.name;
-                email.innerText = user.email;
-                rolle.innerText = user.rolle;
-                editUserA.href = `/admin/edit/user/${user.id}`;
-                editUser.innerText = "✏️";
-                editUser.setAttribute("class", "btn btn-warning");
-                editUser.style.marginRight = "2.5%";
-                deleteForm.setAttribute("class", "form-class");
-                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
-                deleteForm.setAttribute("method", "POST");
-                deleteUser.innerText = "🗑️";
-                deleteUser.setAttribute("class", "btn btn-danger");
-                tr.appendChild(id);
-                tr.appendChild(name);
-                tr.appendChild(email);
-                tr.appendChild(rolle);
-                editUserA.appendChild(editUser);
-                actions.appendChild(editUserA);
-                deleteForm.appendChild(deleteUser);
-                actions.appendChild(deleteForm);
-                tr.appendChild(actions);
-                document.getElementById("lederBody").appendChild(tr);
-            })
+        ledere.forEach((user) => {
+          const tr = document.createElement("tr");
+          const id = document.createElement("td");
+          const name = document.createElement("td");
+          const email = document.createElement("td");
+          const rolle = document.createElement("td");
+          const actions = document.createElement("td");
+          const editUserA = document.createElement("a");
+          const editUser = document.createElement("button");
+          const deleteForm = document.createElement("form");
+          const deleteUser = document.createElement("button");
+          id.setAttribute("class", "id");
+          id.innerText = user.id;
+          name.innerText = user.name;
+          email.innerText = user.email;
+          rolle.innerText = user.rolle;
+          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUser.innerText = "✏️";
+          editUser.setAttribute("class", "btn btn-warning");
+          editUser.style.marginRight = "2.5%";
+          deleteForm.setAttribute("class", "form-class");
+          deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+          deleteForm.setAttribute("method", "POST");
+          deleteUser.innerText = "🗑️";
+          deleteUser.setAttribute("class", "btn btn-danger");
+          tr.appendChild(id);
+          tr.appendChild(name);
+          tr.appendChild(email);
+          tr.appendChild(rolle);
+          editUserA.appendChild(editUser);
+          actions.appendChild(editUserA);
+          deleteForm.appendChild(deleteUser);
+          actions.appendChild(deleteForm);
+          tr.appendChild(actions);
+          document.getElementById("lederBody").appendChild(tr);
+        });
 
-            medlemmer.forEach(user => {
-                const tr = document.createElement("tr");
-                const id = document.createElement("td");
-                const name = document.createElement("td");
-                const email = document.createElement("td");
-                const rolle = document.createElement("td");
-                const actions = document.createElement("td");
-                const editUserA = document.createElement("a");
-                const editUser = document.createElement("button");
-                const deleteForm = document.createElement("form");
-                const deleteUser = document.createElement("button");
-                id.setAttribute("class", "id");
-                id.innerText = user.id;
-                name.innerText = user.name;
-                email.innerText = user.email;
-                rolle.innerText = user.rolle;
-                editUserA.href = `/admin/edit/user/${user.id}`;
-                editUser.innerText = "✏️";
-                editUser.setAttribute("class", "btn btn-warning");
-                editUser.style.marginRight = "2.5%";
-                deleteForm.setAttribute("class", "form-class");
-                deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
-                deleteForm.setAttribute("method", "POST");
-                deleteUser.innerText = "🗑️";
-                deleteUser.setAttribute("class", "btn btn-danger");
-                tr.appendChild(id);
-                tr.appendChild(name);
-                tr.appendChild(email);
-                tr.appendChild(rolle);
-                editUserA.appendChild(editUser);
-                actions.appendChild(editUserA);
-                deleteForm.appendChild(deleteUser);
-                actions.appendChild(deleteForm);
-                tr.appendChild(actions);
-                document.getElementById("medlemBody").appendChild(tr);
-            })
-        })
-</script>
-
-<body id="editBody">
-    <h3>
-        Administratorer
-    </h3>
+        medlemmer.forEach((user) => {
+          const tr = document.createElement("tr");
+          const id = document.createElement("td");
+          const name = document.createElement("td");
+          const email = document.createElement("td");
+          const rolle = document.createElement("td");
+          const actions = document.createElement("td");
+          const editUserA = document.createElement("a");
+          const editUser = document.createElement("button");
+          const deleteForm = document.createElement("form");
+          const deleteUser = document.createElement("button");
+          id.setAttribute("class", "id");
+          id.innerText = user.id;
+          name.innerText = user.name;
+          email.innerText = user.email;
+          rolle.innerText = user.rolle;
+          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUser.innerText = "✏️";
+          editUser.setAttribute("class", "btn btn-warning");
+          editUser.style.marginRight = "2.5%";
+          deleteForm.setAttribute("class", "form-class");
+          deleteForm.setAttribute("action", `/post/slettBruker/${user.id}`);
+          deleteForm.setAttribute("method", "POST");
+          deleteUser.innerText = "🗑️";
+          deleteUser.setAttribute("class", "btn btn-danger");
+          tr.appendChild(id);
+          tr.appendChild(name);
+          tr.appendChild(email);
+          tr.appendChild(rolle);
+          editUserA.appendChild(editUser);
+          actions.appendChild(editUserA);
+          deleteForm.appendChild(deleteUser);
+          actions.appendChild(deleteForm);
+          tr.appendChild(actions);
+          document.getElementById("medlemBody").appendChild(tr);
+        });
+      });
+  </script>
+  <body id="editBody">
+    <h3>Administratorer</h3>
     <table id="tableAdministratorer">
-        <thead id="thead">
-            <tr>
-                <th>#</th>
-                <th>Navn</th>
-                <th>E-post</th>
-                <th>Rolle</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="administratorBody">
-
-        </tbody>
+      <thead id="thead">
+        <tr>
+          <th>#</th>
+          <th>Navn</th>
+          <th>E-post</th>
+          <th>Rolle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="administratorBody"></tbody>
     </table>
 
-    <h3>
-        Ledere
-    </h3>
+    <h3>Ledere</h3>
     <table id="tableLedere">
-        <thead id="thead">
-            <tr>
-                <th>#</th>
-                <th>Navn</th>
-                <th>E-post</th>
-                <th>Rolle</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="lederBody">
-
-        </tbody>
+      <thead id="thead">
+        <tr>
+          <th>#</th>
+          <th>Navn</th>
+          <th>E-post</th>
+          <th>Rolle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="lederBody"></tbody>
     </table>
-    <h3>
-        Medlemmer
-    </h3>
+    <h3>Medlemmer</h3>
     <table id="tableMedlemmer">
-        <thead id="thead">
-            <tr>
-                <th>#</th>
-                <th>Navn</th>
-                <th>E-post</th>
-                <th>Rolle</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="medlemBody">
-
-        </tbody>
+      <thead id="thead">
+        <tr>
+          <th>#</th>
+          <th>Navn</th>
+          <th>E-post</th>
+          <th>Rolle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="medlemBody"></tbody>
     </table>
-</body>
-
+    <a href="../" id="link">
+        Gå tilbake
+    </a>
+  </body>
 </html>
