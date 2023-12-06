@@ -37,8 +37,19 @@ const sql = {
   findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
 };
 
-// Use sql object to access prepared statements
-// Example: sql.insertUser.run(...)
+// TestData
+function createTestData() {
+  const hashPassword = (password:any) => {
+    const saltRounds = 6;
+    return bcrypt.hashSync(password, saltRounds);
+  };''
+  sql.insertUser.run("admin", "admin@test.com", "admin", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
+  sql.insertUser.run("leder", "leder@test.com", "leder", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
+  sql.insertUser.run("forelder", "forelder@test.com", "forelder", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
+  sql.createParent.run("forelder", "forelder@test.com", hashPassword("Passord01"), crypto.randomUUID());
+  sql.insertUser.run("medlem", "medlem@test.com", "medlem", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
+  sql.createPeletong.run("Peletong 1");
+}
 
 app.get("/json/users", (req, res) => {
   const users = db.prepare("SELECT * FROM users").all();

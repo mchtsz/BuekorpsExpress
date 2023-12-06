@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS users (
     phone TEXT NOT NULL,
     adress TEXT NOT NULL,
     birthdate TEXT NOT NULL,
+    peletong_id INTEGER,
     email TEXT NOT NULL,
     password TEXT NOT NULL,
-    peletong_id INTEGER,
     token TEXT NOT NULL,
     FOREIGN KEY(peletong_id) REFERENCES peletong(id)
 );
