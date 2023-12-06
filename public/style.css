@@ -62,7 +62,7 @@ input,
 select,
 option {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  background-color: transparent;
+  background-color: #333;
   border: 1px solid #4f4d4d;
   color: #fff;
   width: 500px;
