@@ -11,35 +11,34 @@ const app = express();
 const db = new Database("database.db");
 
 app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cookieParser());
 
 app.use(
   session({
-    secret: "secret",
+    secret: process.env.SESSION_SECRET || "default_secret",
     resave: false,
     saveUninitialized: false,
   })
 );
 
-const insertStmt = db.prepare(
-  `INSERT INTO users (name, email, rolle, password, token, phone, adress, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
-);
+// SQL statements
+const sql = {
+  insertUser: db.prepare(
+    `INSERT INTO users (name, email, rolle, password, phone, adress, birthdate, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+  ),
+  createParent: db.prepare(
+    `INSERT INTO forelder (name, email, password, token) VALUES (?, ?, ?, ?);`
+  ),
+  createPeletong: db.prepare(`INSERT INTO peletong (name) VALUES (?);`),
+  addMedlem: db.prepare(`UPDATE users SET peletong_id = 1 WHERE id = ?`),
+  removeMedlem: db.prepare(`UPDATE users SET peletong_id = NULL WHERE id = ?`),
+  deleteUser: db.prepare("DELETE FROM users WHERE id = ?"),
+  findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
+};
 
-const createStmt = db.prepare(`INSERT INTO peletong (name) VALUES (?);`);
-
-const addMedlemStmt = db.prepare(
-  `UPDATE users SET peletong_id = 1 WHERE id = ?`
-);
-
-const removeMedlemStmt = db.prepare(
-  `UPDATE users SET peletong_id = NULL WHERE id = ?`
-)
-
-const deleteStatement = db.prepare("DELETE FROM users WHERE id = ?");
-
-const findByTokenStmt = db.prepare("SELECT * FROM users WHERE token = ?");
+// Use sql object to access prepared statements
+// Example: sql.insertUser.run(...)
 
 app.get("/json/users", (req, res) => {
   const users = db.prepare("SELECT * FROM users").all();
@@ -48,7 +47,7 @@ app.get("/json/users", (req, res) => {
 app.get("/json/peletong", (req, res) => {
   const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id =1`).all();
   res.send(peletong);
-})
+});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -76,6 +75,9 @@ app.post("/login", (req, res) => {
       case "leder":
         res.redirect("/leder/");
         break;
+      case "forelder":
+        res.redirect("/forelder/");
+        break;
       case "medlem":
         res.redirect("/medlem/");
         break;
@@ -97,28 +99,43 @@ app.post("/createUser", (req, res) => {
     res.status(409).send("Email already exists");
   } else {
     const hash = bcrypt.hashSync(password, 6);
-    insertStmt.run(name, email, rolle, hash, token, "", "", "");
-    setTimeout(() => {
-      res.redirect("/admin/edit/");
-    }, 1000);
+
+    const insertUser = () => {
+      sql.insertUser.run(name, email, rolle, hash, "", "", "", token,);
+    };
+
+    switch (rolle) {
+      case "forelder":
+        insertUser();
+        sql.createParent.run(name, email, hash, token);
+        setTimeout(() => {
+          res.redirect("/admin/edit/");
+        }, 1000);
+        break;
+      default:
+        insertUser();
+        setTimeout(() => {
+          res.redirect("/admin/");
+        }, 1000);
+    }
   }
 });
 
 app.post("/addMedlem/:id", (req, res) => {
   const id = req.params.id;
-  addMedlemStmt.run(id);
+  sql.addMedlem.run(id);
   res.redirect("/leder/kompani");
 });
 
 app.post("/removeMedlem/:id", (req, res) => {
   const { id } = req.params;
-  removeMedlemStmt.run(id);
+  sql.removeMedlem.run(id);
   res.redirect("/leder/kompani");
-})
+});
 
 app.post("/createPeletong", (req, res) => {
   const { name } = req.body;
-  createStmt.run(name);
+  sql.createPeletong.run(name);
   setTimeout(() => {
     res.redirect("/admin/");
   }, 1000);
@@ -126,7 +143,7 @@ app.post("/createPeletong", (req, res) => {
 
 app.post("/post/slettBruker/:id", (req, res) => {
   const id = req.params.id;
-  deleteStatement.run(id);
+  sql.deleteUser.run(id);
   res.redirect("/admin/edit");
 });
 
@@ -142,7 +159,7 @@ app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
   const { id, name, email, rolle, phone, adress, birthdate } = req.body;
 
-  const user = findByTokenStmt.get(token) as any;
+  const user = sql.findByToken.get(token) as any;
 
   if (name != user.name) {
     const updateStmt = db.prepare("UPDATE users SET name = ? WHERE id = ?");
@@ -185,7 +202,7 @@ app.post("/post/redigerMedlem", (req, res) => {
   const token = req.cookies.token;
   const { id, name, email, phone, adress, birthdate } = req.body;
 
-  const user = findByTokenStmt.get(token) as any;
+  const user = sql.findByToken.get(token) as any;
 
   if (name != user.name) {
     const updateStmt = db.prepare("UPDATE users SET name = ? WHERE id = ?");
@@ -219,7 +236,7 @@ app.post("/post/redigerMedlem", (req, res) => {
 
 app.get("/api/user/token", (req, res) => {
   const token = req.cookies.token;
-  const user = findByTokenStmt.get(token) as any;
+  const user = sql.findByToken.get(token) as any;
   if (user) {
     res.json({
       success: true,
@@ -234,7 +251,7 @@ app.get("/api/user/token", (req, res) => {
 
 app.post("/post/redigerKontakt", (req, res) => {
   const token = req.cookies.token;
-  const user = findByTokenStmt.get(token) as any;
+  const user = sql.findByToken.get(token) as any;
 
   const { id, name, email, phone, birthdate, adress } = req.body;
 
@@ -272,6 +289,9 @@ app.post("/post/redigerKontakt", (req, res) => {
     case "leder":
       res.redirect(`/leder/`);
       break;
+    case "forelder":
+      res.redirect(`/forelder/`);
+      break;
     case "medlem":
       res.redirect(`/medlem/`);
       break;
@@ -301,7 +321,7 @@ app.use((req, res, next) => {
     return;
   }
 
-  const user = findByTokenStmt.get(token) as any;
+  const user = sql.findByToken.get(token) as any;
 
   if (!user) {
     res.redirect("/");
@@ -316,6 +336,8 @@ app.use((req, res, next) => {
     auth = "admin";
   } else if (req.url.startsWith("/leder")) {
     auth = "leder";
+  } else if (req.url.startsWith(`/forelder/`)) {
+    auth = "forelder";
   } else if (req.url.startsWith(`/medlem/`)) {
     auth = "medlem";
   } else {
