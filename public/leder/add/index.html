@@ -29,7 +29,7 @@
                     email.innerText = user.email;
                     rolle.innerText = user.rolle;
                     deleteForm.setAttribute("class", "form-class");
-                    deleteForm.setAttribute("action", `/post/fjernBruker/${user.id}`);
+                    deleteForm.setAttribute("action", `/addMedlem/${user.id}`);
                     deleteForm.setAttribute("method", "POST");
                     deleteForm.style.padding="0";
                     deleteUser.innerText = "+";

@@ -29,12 +29,26 @@ const insertStmt = db.prepare(
 
 const createStmt = db.prepare(`INSERT INTO peletong (name) VALUES (?);`);
 
+const addMedlemStmt = db.prepare(
+  `UPDATE users SET peletong_id = 1 WHERE id = ?`
+);
+
+const removeMedlemStmt = db.prepare(
+  `UPDATE users SET peletong_id = NULL WHERE id = ?`
+)
+
+const deleteStatement = db.prepare("DELETE FROM users WHERE id = ?");
+
 const findByTokenStmt = db.prepare("SELECT * FROM users WHERE token = ?");
 
 app.get("/json/users", (req, res) => {
   const users = db.prepare("SELECT * FROM users").all();
   res.send(users);
 });
+app.get("/json/peletong", (req, res) => {
+  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id =1`).all();
+  res.send(peletong);
+})
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -74,7 +88,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.post("/addUser", (req, res) => {
+app.post("/createUser", (req, res) => {
   const { name, email, rolle, password } = req.body;
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   const token = crypto.randomUUID();
@@ -90,6 +104,18 @@ app.post("/addUser", (req, res) => {
   }
 });
 
+app.post("/addMedlem/:id", (req, res) => {
+  const id = req.params.id;
+  addMedlemStmt.run(id);
+  res.redirect("/leder/kompani");
+});
+
+app.post("/removeMedlem/:id", (req, res) => {
+  const { id } = req.params;
+  removeMedlemStmt.run(id);
+  res.redirect("/leder/kompani");
+})
+
 app.post("/createPeletong", (req, res) => {
   const { name } = req.body;
   createStmt.run(name);
@@ -100,7 +126,6 @@ app.post("/createPeletong", (req, res) => {
 
 app.post("/post/slettBruker/:id", (req, res) => {
   const id = req.params.id;
-  const deleteStatement = db.prepare("DELETE FROM users WHERE id = ?");
   deleteStatement.run(id);
   res.redirect("/admin/edit");
 });

@@ -23,7 +23,6 @@ form {
   gap: 1.5rem;
 }
 
-
 form aside div {
   display: flex;
   flex-direction: column;
@@ -57,33 +56,30 @@ label {
 /* Custom styling for input */
 input {
   padding: 1rem;
+}
+
+input,
+select,
+option {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: transparent;
+  border: 1px solid #4f4d4d;
+  color: #fff;
   width: 500px;
-  border: 1px solid #fff;
   border-radius: 5px;
   font-size: 18px;
-  background-color: transparent;
-  color: #fff;
 }
 
 input:focus {
-  outline: 2px solid #fff;
+  outline: 1px solid #ccc;
 }
 
 select,
 option {
-  width: 500px;
-  background-color: #333;
   height: 50px;
-  font-size: 18px;
   padding: 0.5rem;
-  border-radius: 5px;
-  color: #fff;
 }
 
-select {
-  border: 1px solid #fff;
-}
- 
 input:read-only {
   background-color: #000;
   color: #fff;
@@ -96,10 +92,9 @@ input::placeholder {
 input[type="submit"] {
   background-color: #4caf50;
   font-weight: 500;
-  border: none;
   font-size: 18px;
   color: white;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   cursor: pointer;
 }
 
@@ -147,7 +142,7 @@ main {
 
 main a {
   display: flex;
-  background-color: rgb(48, 48, 45);
+  background-color: rgb(46, 49, 49);
   width: 400px;
   height: 250px;
   justify-content: center;
@@ -191,7 +186,7 @@ section {
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
+  height: 100vh;
 }
 
 #indexSection {
@@ -213,12 +208,6 @@ section a {
 section a img {
   width: 60px;
   margin: 1rem 0;
-}
-
-table {
-  width: 100%;
-  margin: 2rem 0;
-  border-collapse: collapse;
 }
 
 #editBody {
@@ -243,10 +232,30 @@ table {
   overflow-x: hidden;
   color: #fff;
 }
+
+table {
+  width: 100%;
+  border-radius: 1rem;
+  margin: 2rem 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-collapse: collapse;
+}
+
 table,
 th,
 td {
-  border: 1px solid white;
+  border: none;
+}
+
+th {
+  border-bottom: 0.1px solid #ccc;
+  color: #fff;
+  font-size: 18px;
+}
+
+td {
+  font-size: 16px;
+  color: #fff;
 }
 
 th,
@@ -266,10 +275,16 @@ td {
 
 .btn-warning {
   background-color: transparent;
-  border: 1px solid #fff;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 0 2px #fff;
 }
 
 .btn-danger {
   background-color: transparent;
-  border: 1px solid #fff;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 0 2px #fff;
+}
+
+.btn:hover {
+  transform: scale(1.1);
 }

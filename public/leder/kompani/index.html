@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Kompani</title>
     <script defer>
-      fetch("/json/users")
+      fetch("/json/peletong")
         .then((res) => res.json())
         .then((data) => {
           const medlemmer = data.filter((user) => user.rolle === "medlem");
@@ -34,8 +34,7 @@
             editUser.innerText = "✏️";
             editUser.setAttribute("class", "btn btn-warning");
             editUser.style.marginRight = "2.5%";
-            deleteForm.setAttribute("class", "form-class");
-            deleteForm.setAttribute("action", `/post/fjernBruker/${user.id}`);
+            deleteForm.setAttribute("action", `/removeMedlem/${user.id}`);
             deleteForm.setAttribute("method", "POST");
             deleteForm.style.padding = "0";
             deleteUser.innerText = "🗑️";
@@ -73,7 +72,8 @@
     </style>
   </head>
   <body id="editBody">
-    <h3>Mitt kompani</h3>
+    <br>
+    <h1>Mitt kompani</h1>
     <table>
       <thead id="thead">
         <tr>
