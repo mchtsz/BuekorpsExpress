@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Medlemmer i buekorps, velg de du vil ha</title>
     <script defer>
-      fetch("/json/users")
+      fetch("/json/peletongNULL")
         .then((res) => res.json())
         .then((data) => {
           const medlemmer = data.filter((user) => user.rolle === "medlem");

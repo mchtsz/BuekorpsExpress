@@ -54,6 +54,11 @@ app.get("/json/peletong", (req, res) => {
   res.send(peletong);
 });
 
+app.get("/json/peletongNULL", (req, res) => {
+  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id IS NULL`).all();
+  res.send(peletong);
+});
+
 app.get("/livsglede", (req, res) => {
   res.sendFile(__dirname + "/public/livsglede.html");
 })
