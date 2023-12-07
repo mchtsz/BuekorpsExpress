@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../../images/people.svg" />
+    <link rel="stylesheet" href="../../style.css" />
+    <title>Medlemmer i buekorps, velg de du vil ha</title>
+    <script defer>
+      fetch("/json/users")
+        .then((res) => res.json())
+        .then((data) => {
+          const medlemmer = data.filter((user) => user.rolle === "medlem");
+
+          medlemmer.sort((a, b) => a.id - b.id);
+
+          medlemmer.forEach((user) => {
+            const tr = document.createElement("tr");
+            const id = document.createElement("td");
+            const name = document.createElement("td");
+            const email = document.createElement("td");
+            const rolle = document.createElement("td");
+            const actions = document.createElement("td");
+            const deleteForm = document.createElement("form");
+            const deleteUser = document.createElement("button");
+            id.setAttribute("class", "id");
+            id.innerText = user.id;
+            name.innerText = user.name;
+            email.innerText = user.email;
+            rolle.innerText = user.rolle;
+            deleteForm.setAttribute("class", "form-class");
+            deleteForm.setAttribute("action", `/addMedlem/${user.id}`);
+            deleteForm.setAttribute("method", "POST");
+            deleteForm.style.padding = "0";
+            deleteUser.innerText = "+";
+            deleteUser.setAttribute("class", "btn btn-danger");
+            deleteUser.style.border = "none";
+            deleteUser.style.fontSize = "30px";
+            deleteUser.style.margin = "0";
+            tr.appendChild(id);
+            tr.appendChild(name);
+            tr.appendChild(email);
+            tr.appendChild(rolle);
+            deleteForm.appendChild(deleteUser);
+            actions.appendChild(deleteForm);
+            tr.appendChild(actions);
+            document.getElementById("kompaniBody").appendChild(tr);
+          });
+        });
+    </script>
+    <style>
+      form {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body id="editBody">
+    <h3>Medlemmer i buekorps, velg de du vil ha</h3>
+    <table>
+      <thead id="thead">
+        <tr>
+          <th>#</th>
+          <th>Navn</th>
+          <th>E-post</th>
+          <th>Rolle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="kompaniBody"></tbody>
+    </table>
+  </body>
+</html>

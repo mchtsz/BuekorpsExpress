@@ -15,16 +15,16 @@
       margin: 0;
     }
     #link {
-        position: absolute;
-        bottom: 0;
-        left: 45%;
-        right: 45%;
-        display: flex;
-        flex-direction: row;
-        width: 350px;
-        align-items: center;
-        text-decoration: none;
-        color: #fff;
+      position: absolute;
+      bottom: 0;
+      left: 45%;
+      right: 45%;
+      display: flex;
+      flex-direction: row;
+      width: 350px;
+      align-items: center;
+      text-decoration: none;
+      color: #fff;
     }
   </style>
 
@@ -34,7 +34,9 @@
       .then((data) => {
         const admins = data.filter((user) => user.rolle === "admin");
         const ledere = data.filter((user) => user.rolle === "leder");
-        const medlemmer = data.filter((user) => user.rolle === "medlem" || user.rolle === "forelder");
+        const medlemmer = data.filter(
+          (user) => user.rolle === "medlem" || user.rolle === "forelder"
+        );
 
         admins.sort((a, b) => a.id - b.id);
         ledere.sort((a, b) => a.id - b.id);
@@ -56,7 +58,7 @@
           name.innerText = user.name;
           email.innerText = user.email;
           rolle.innerText = user.rolle;
-          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUserA.href = `/admin/edit/${user.id}`;
           editUser.innerText = "✏️";
           editUser.setAttribute("class", "btn btn-warning");
           editUser.style.marginRight = "2.5%";
@@ -94,7 +96,7 @@
           name.innerText = user.name;
           email.innerText = user.email;
           rolle.innerText = user.rolle;
-          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUserA.href = `/admin/edit/${user.id}`;
           editUser.innerText = "✏️";
           editUser.setAttribute("class", "btn btn-warning");
           editUser.style.marginRight = "2.5%";
@@ -131,7 +133,7 @@
           name.innerText = user.name;
           email.innerText = user.email;
           rolle.innerText = user.rolle;
-          editUserA.href = `/admin/edit/user/${user.id}`;
+          editUserA.href = `/admin/edit/${user.id}`;
           editUser.innerText = "✏️";
           editUser.setAttribute("class", "btn btn-warning");
           editUser.style.marginRight = "2.5%";
@@ -153,6 +155,7 @@
         });
       });
   </script>
+
   <body id="editBody">
     <table id="tableAdministratorer">
       <thead id="thead">
@@ -190,8 +193,6 @@
       </thead>
       <tbody id="medlemBody"></tbody>
     </table>
-    <a href="../" id="link">
-        Gå tilbake
-    </a>
+    <a href="../" id="link">Gå tilbake</a>
   </body>
 </html>

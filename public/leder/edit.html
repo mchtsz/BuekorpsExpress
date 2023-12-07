@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="icon" type="image/png" href="../../images/user-info.svg" />
+    <title>Rediger medlemmer</title>
+  </head>
+  <body>
+    <form action="/post/redigerMedlem" method="POST" id="editingForm">
+      <aside>
+        <div>
+          <h1>Generel info</h1>
+          <label>ID</label>
+          <input type="number" name="id" id="id" placeholder="ID" readonly />
+          <label>Fult navn</label>
+          <input type="text" name="name" id="name" placeholder="Fullt navn" />
+          <label>Email</label>
+          <input type="email" name="email" id="email" placeholder="Email" />
+        </div>
+        <div>
+          <h1>Kontaktinfo</h1>
+          <label>Telefon</label>
+          <input type="tel" name="phone" id="phone" placeholder="Telefon" />
+          <label>Adresse</label>
+          <input type="text" name="adress" id="adress" placeholder="Adresse" />
+          <label>Fødselsdato</label>
+          <input
+            type="date"
+            name="birthdate"
+            id="birthdate"
+            placeholder="Fødselsdato"
+          />
+        </div>
+      </aside>
+      <input type="submit" />
+    </form>
+    <script defer>
+      const userId = window.location.pathname.split("/").pop();
+      fetch("/json/users")
+        .then((res) => res.json())
+        .then((data) => {
+          const user = data.find((user) => user.id == userId);
+          document.getElementById("id").value = user.id;
+          document.getElementById("name").value = user.name;
+          document.getElementById("email").value = user.email;
+          document.getElementById("phone").value = user.phone;
+          document.getElementById("adress").value = user.adress;
+          document.getElementById("birthdate").value = user.birthdate;
+        });
+    </script>
+  </body>
+</html>

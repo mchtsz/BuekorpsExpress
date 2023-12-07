@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="icon" type="image/png" href="../../images/people.svg" />
+    <title>God stuff</title>
+  </head>
+  <body>
+    <style>
+      section {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        gap: 2rem;
+      }
+
+      a {
+        position: absolute;
+        bottom: 0;
+        left: 45%;
+        right: 45%;
+        display: flex;
+        flex-direction: row;
+        width: 350px;
+        align-items: center;
+        text-decoration: none;
+        color: #fff;
+      }
+    </style>
+    <section>
+      <form action="/createPeletong" method="POST">
+        <h1>Peletong</h1>
+        <input type="text" name="name" id="name" placeholder="Fult navn" />
+        <input type="submit" />
+      </form>
+      <form action="deprecated">
+        <h1>Legg peletong inn i kompani</h1>
+        <input
+          type="text"
+          name="kompani"
+          id="kompani"
+          placeholder="eks: Kompani"
+        />
+        <input type="submit" />
+      </form>
+    </section>
+    <a href="../"> Gå tilbake </a>
+  </body>
+</html>

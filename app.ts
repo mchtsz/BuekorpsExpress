@@ -1,9 +1,7 @@
 import express from "express";
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import session from "express-session";
 import path from "path";
 import crypto from "crypto";
 
@@ -14,13 +12,66 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "default_secret",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+app.get("/admin/edit/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/admin/id.html");
+});
+
+app.get("/admin/edit/", (req, res) => {
+  res.sendFile(__dirname + "/public/admin/edit.html");
+})
+
+app.get("/admin/create/", (req, res) => {
+  res.sendFile(__dirname + "/public/admin/create.html");
+});
+
+app.get("/admin/createPel/", (req, res) => {
+  res.sendFile(__dirname + "/public/admin/createPel.html");
+});
+
+app.get("/leder/add/", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/add.html");
+});
+
+app.get("/leder/edit/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/edit.html");
+});
+
+app.get("/leder/info/", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/info.html");
+});
+
+app.get("/leder/kompani/", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/kompani.html");
+});
+
+app.get("/json/users", (req, res) => {
+  const users = db.prepare("SELECT * FROM users").all();
+  res.send(users);
+});
+
+app.get("/json/peletong", (req, res) => {
+  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id =1`).all();
+  res.send(peletong);
+});
+
+app.get("/livsglede", (req, res) => {
+  res.sendFile(__dirname + "/public/livsglede.html");
+})
+
+app.get("/api/user/token", (req, res) => {
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
+  if (user) {
+    res.json({
+      success: true,
+      data: user,
+    });
+  } else {
+    res.json({
+      success: false,
+    });
+  }
+});
 
 // SQL statements
 const sql = {
@@ -50,15 +101,6 @@ function createTestData() {
   sql.insertUser.run("medlem", "medlem@test.com", "medlem", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
   sql.createPeletong.run("Peletong 1");
 }
-
-app.get("/json/users", (req, res) => {
-  const users = db.prepare("SELECT * FROM users").all();
-  res.send(users);
-});
-app.get("/json/peletong", (req, res) => {
-  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id =1`).all();
-  res.send(peletong);
-});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -158,14 +200,6 @@ app.post("/post/slettBruker/:id", (req, res) => {
   res.redirect("/admin/edit");
 });
 
-app.get("/admin/edit/user/:id", (req, res) => {
-  res.sendFile(__dirname + "/public/admin/edit/user/index.html");
-});
-
-app.get("/leder/edit/:id", (req, res) => {
-  res.sendFile(__dirname + "/public/leder/edit/index.html");
-});
-
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
   const { id, name, email, rolle, phone, adress, birthdate } = req.body;
@@ -243,21 +277,6 @@ app.post("/post/redigerMedlem", (req, res) => {
   }
 
   res.redirect("/leder/kompani");
-});
-
-app.get("/api/user/token", (req, res) => {
-  const token = req.cookies.token;
-  const user = sql.findByToken.get(token) as any;
-  if (user) {
-    res.json({
-      success: true,
-      data: user,
-    });
-  } else {
-    res.json({
-      success: false,
-    });
-  }
 });
 
 app.post("/post/redigerKontakt", (req, res) => {
