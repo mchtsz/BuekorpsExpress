@@ -12,6 +12,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
+function CheckUserPerms(token: string, rolle: string[]) {
+  const user = sql.findByToken.get(token) as any;
+  if (rolle.includes(user.rolle)) {
+    return true;
+  }
+
+  return false;
+}
+
 app.get("/admin/edit/:id", (req, res) => {
   res.sendFile(__dirname + "/public/admin/id.html");
 });
@@ -41,7 +50,9 @@ app.get("/leder/edit/:id", (req, res) => {
 });
 
 app.get("/leder/", (req, res) => {
-  res.sendFile(__dirname + "/public/leder/kompani.html");
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
+  res.redirect(`/leder/${user.id}`);
 });
 
 app.get("/leder/:id", (req, res) => {
@@ -60,6 +71,8 @@ app.get("/json/user/:id", (req, res) => {
 });
 
 app.get("/json/peletong/:id", (req, res) => {
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
   const { id } = req.params;
   const peletong = db
     .prepare(`SELECT * FROM users WHERE peletong_id =?`)
@@ -67,9 +80,14 @@ app.get("/json/peletong/:id", (req, res) => {
   res.send(peletong);
 });
 
+app.get("/json/barn/:id", (req, res) => {
+  const { id } = req.params;
+  const barn = db.prepare(`SELECT * FROM users WHERE forelder_id=?`).all(id);
+  res.send(barn);
+})
+
 app.get("/medlem/peletong/", (req, res) => {
-  const token = req.cookies.token;
-  const user = sql.findByToken.get(token) as any;
+  const user = sql.findByToken.get(req.cookies.token) as any;
   const userPeletongID = user.peletong_id;
   res.redirect(`/medlem/peletong/${userPeletongID}`);
 });
