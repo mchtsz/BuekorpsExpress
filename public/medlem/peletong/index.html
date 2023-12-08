@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Kompani</title>
     <script defer>
-      fetch("/json/peletong")
+      const id = window.location.pathname.split("/")[3];
+      console.log(id);
+      fetch(`/json/peletong/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          const medlemmer = data.filter((user) => user.rolle === "medlem");
+          const medlemmer = data.filter((user) => user.rolle === "medlem" || user.rolle === "leder");
 
           medlemmer.sort((a, b) => a.id - b.id);
 

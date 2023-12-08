@@ -18,7 +18,7 @@ app.get("/admin/edit/:id", (req, res) => {
 
 app.get("/admin/edit/", (req, res) => {
   res.sendFile(__dirname + "/public/admin/edit.html");
-})
+});
 
 app.get("/admin/create/", (req, res) => {
   res.sendFile(__dirname + "/public/admin/create.html");
@@ -26,6 +26,10 @@ app.get("/admin/create/", (req, res) => {
 
 app.get("/admin/createPel/", (req, res) => {
   res.sendFile(__dirname + "/public/admin/createPel.html");
+});
+
+app.get("/forelder/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/forelder/index.html");
 });
 
 app.get("/leder/add/", (req, res) => {
@@ -36,11 +40,11 @@ app.get("/leder/edit/:id", (req, res) => {
   res.sendFile(__dirname + "/public/leder/edit.html");
 });
 
-app.get("/leder/info/", (req, res) => {
-  res.sendFile(__dirname + "/public/leder/info.html");
+app.get("/leder/", (req, res) => {
+  res.sendFile(__dirname + "/public/leder/kompani.html");
 });
 
-app.get("/leder/kompani/", (req, res) => {
+app.get("/leder/:id", (req, res) => {
   res.sendFile(__dirname + "/public/leder/kompani.html");
 });
 
@@ -49,19 +53,47 @@ app.get("/json/users", (req, res) => {
   res.send(users);
 });
 
-app.get("/json/peletong", (req, res) => {
-  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id =1`).all();
+app.get("/json/user/:id", (req, res) => {
+  const { id } = req.params;
+  const user = db.prepare("SELECT * FROM users WHERE id=?").all(id);
+  res.send(user);
+});
+
+app.get("/json/peletong/:id", (req, res) => {
+  const { id } = req.params;
+  const peletong = db
+    .prepare(`SELECT * FROM users WHERE peletong_id =?`)
+    .all(id);
   res.send(peletong);
 });
 
+app.get("/medlem/peletong/", (req, res) => {
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
+  const userPeletongID = user.peletong_id;
+  res.redirect(`/medlem/peletong/${userPeletongID}`);
+});
+
+app.get("/medlem/peletong/:id", (req, res) => {
+  res.sendFile(__dirname + "/public/medlem/peletong/index.html");
+});
+
 app.get("/json/peletongNULL", (req, res) => {
-  const peletong = db.prepare(`SELECT * FROM users WHERE peletong_id IS NULL`).all();
+  const peletong = db
+    .prepare(`SELECT * FROM users WHERE peletong_id = 0`)
+    .all();
   res.send(peletong);
+});
+
+app.get("/json/barn/:id", (req, res) => {
+  const { id } = req.params;
+  const barn = db.prepare(`SELECT * FROM barn`).all(id);
+  res.send(barn);
 });
 
 app.get("/livsglede", (req, res) => {
   res.sendFile(__dirname + "/public/livsglede.html");
-})
+});
 
 app.get("/api/user/token", (req, res) => {
   const token = req.cookies.token;
@@ -81,29 +113,80 @@ app.get("/api/user/token", (req, res) => {
 // SQL statements
 const sql = {
   insertUser: db.prepare(
-    `INSERT INTO users (name, email, rolle, password, phone, adress, birthdate, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+    `INSERT INTO users (name, email, rolle, password, phone, adress, birthdate, peletong_id, forelder_id, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
   ),
   createParent: db.prepare(
     `INSERT INTO forelder (name, email, password, token) VALUES (?, ?, ?, ?);`
   ),
   createPeletong: db.prepare(`INSERT INTO peletong (name) VALUES (?);`),
   addMedlem: db.prepare(`UPDATE users SET peletong_id = 1 WHERE id = ?`),
-  removeMedlem: db.prepare(`UPDATE users SET peletong_id = NULL WHERE id = ?`),
+  updatePeletong: db.prepare(`UPDATE users SET peletong_id = ? WHERE id = ?`),
+  updateForelderID: db.prepare(`UPDATE users SET forelder_id = ? WHERE id = ?`),
+  removeMedlem: db.prepare(`UPDATE users SET peletong_id = 0 WHERE id = ?`),
   deleteUser: db.prepare("DELETE FROM users WHERE id = ?"),
   findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
 };
-
 // TestData
 function createTestData() {
-  const hashPassword = (password:any) => {
+  const hashPassword = (password: any) => {
     const saltRounds = 6;
     return bcrypt.hashSync(password, saltRounds);
-  };''
-  sql.insertUser.run("admin", "admin@test.com", "admin", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
-  sql.insertUser.run("leder", "leder@test.com", "leder", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
-  sql.insertUser.run("forelder", "forelder@test.com", "forelder", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
-  sql.createParent.run("forelder", "forelder@test.com", hashPassword("Passord01"), crypto.randomUUID());
-  sql.insertUser.run("medlem", "medlem@test.com", "medlem", hashPassword("Passord01"), "", "", "", crypto.randomUUID());
+  };
+  ("");
+  sql.insertUser.run(
+    "admin",
+    "admin@test.com",
+    "admin",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "0",
+    "0",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "leder",
+    "leder@test.com",
+    "leder",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "0",
+    "0",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "forelder",
+    "forelder@test.com",
+    "forelder",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "0",
+    "0",
+    crypto.randomUUID()
+  );
+  sql.createParent.run(
+    "forelder",
+    "forelder@test.com",
+    hashPassword("Passord01"),
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "medlem",
+    "medlem@test.com",
+    "medlem",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "0",
+    "0",
+    crypto.randomUUID()
+  );
   sql.createPeletong.run("Peletong 1");
 }
 
@@ -131,10 +214,10 @@ app.post("/login", (req, res) => {
         res.redirect("/admin/");
         break;
       case "leder":
-        res.redirect("/leder/");
+        res.redirect(`/leder/${user.id}`);
         break;
       case "forelder":
-        res.redirect("/forelder/");
+        res.redirect(`/forelder/${user.id}`);
         break;
       case "medlem":
         res.redirect("/medlem/");
@@ -159,7 +242,7 @@ app.post("/createUser", (req, res) => {
     const hash = bcrypt.hashSync(password, 6);
 
     const insertUser = () => {
-      sql.insertUser.run(name, email, rolle, hash, "", "", "", token,);
+      sql.insertUser.run(name, email, rolle, hash, "", "", "", "0", "0", token);
     };
 
     switch (rolle) {
@@ -180,15 +263,19 @@ app.post("/createUser", (req, res) => {
 });
 
 app.post("/addMedlem/:id", (req, res) => {
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
   const id = req.params.id;
   sql.addMedlem.run(id);
-  res.redirect("/leder/kompani");
+  res.redirect(`/leder/${user.id}`);
 });
 
 app.post("/removeMedlem/:id", (req, res) => {
-  const { id } = req.params;
+  const token = req.cookies.token;
+  const user = sql.findByToken.get(token) as any;
+  const id = req.params.id;
   sql.removeMedlem.run(id);
-  res.redirect("/leder/kompani");
+  res.redirect(`/leder/${user.id}`);
 });
 
 app.post("/createPeletong", (req, res) => {
@@ -207,7 +294,17 @@ app.post("/post/slettBruker/:id", (req, res) => {
 
 app.post("/post/redigerBruker", (req, res) => {
   const token = req.cookies.token;
-  const { id, name, email, rolle, phone, adress, birthdate } = req.body;
+  const {
+    id,
+    name,
+    email,
+    rolle,
+    peletong_id,
+    phone,
+    adress,
+    birthdate,
+    forelder_id,
+  } = req.body;
 
   const user = sql.findByToken.get(token) as any;
 
@@ -222,10 +319,12 @@ app.post("/post/redigerBruker", (req, res) => {
   }
 
   if (rolle != user.rolle) {
-    if (rolle != "velg") {
-      const updateStmt = db.prepare("UPDATE users SET rolle = ? WHERE id = ?");
-      updateStmt.run(rolle, id);
-    }
+    const updateStmt = db.prepare("UPDATE users SET rolle = ? WHERE id = ?");
+    updateStmt.run(rolle, id);
+  }
+
+  if (peletong_id != user.peletong_id) {
+    sql.updatePeletong.run(peletong_id, id);
   }
 
   if (phone != user.phone) {
@@ -245,7 +344,11 @@ app.post("/post/redigerBruker", (req, res) => {
     updateStmt.run(adress, id);
   }
 
-  res.redirect("/admin/edit");
+  if (forelder_id != user.forelder_id) {
+    sql.updateForelderID.run(forelder_id, id);
+  }
+
+  res.redirect("/admin/edit/");
 });
 
 app.post("/post/redigerMedlem", (req, res) => {
@@ -281,7 +384,7 @@ app.post("/post/redigerMedlem", (req, res) => {
     updateStmt.run(adress, id);
   }
 
-  res.redirect("/leder/kompani");
+  res.redirect(`/leder/${user.id}`);
 });
 
 app.post("/post/redigerKontakt", (req, res) => {
@@ -322,10 +425,10 @@ app.post("/post/redigerKontakt", (req, res) => {
       res.redirect("/admin/");
       break;
     case "leder":
-      res.redirect(`/leder/`);
+      res.redirect(`/leder/${user.id}`);
       break;
     case "forelder":
-      res.redirect(`/forelder/`);
+      res.redirect(`/forelder/${user.id}`);
       break;
     case "medlem":
       res.redirect(`/medlem/`);
@@ -369,9 +472,9 @@ app.use((req, res, next) => {
 
   if (req.url.startsWith("/admin")) {
     auth = "admin";
-  } else if (req.url.startsWith("/leder")) {
+  } else if (req.url.startsWith(`/leder/}`)) {
     auth = "leder";
-  } else if (req.url.startsWith(`/forelder/`)) {
+  } else if (req.url.startsWith(`/forelder/}`)) {
     auth = "forelder";
   } else if (req.url.startsWith(`/medlem/`)) {
     auth = "medlem";

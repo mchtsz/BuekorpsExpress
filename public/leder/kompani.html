@@ -6,12 +6,19 @@
     <link rel="icon" type="image/png" href="../../images/people.svg" />
     <link rel="stylesheet" href="../../style.css" />
     <title>Kompani</title>
-    <script defer>
-      fetch("/json/peletong")
-        .then((res) => res.json())
-        .then((data) => {
-          const medlemmer = data.filter((user) => user.rolle === "medlem");
+    <script>
+      const fetchData = async () => {
+        try {
+          const id = window.location.pathname.split("/")[2];
+          const userRes = await fetch(`/json/user/${id}`);
+          const user = await userRes.json();
 
+          const peletongRes = await fetch(
+            `/json/peletong/${user[0].peletong_id}`
+          );
+          const data = await peletongRes.json();
+
+          const medlemmer = data.filter((user) => user.rolle === "medlem");
           medlemmer.sort((a, b) => a.id - b.id);
 
           medlemmer.forEach((user) => {
@@ -50,7 +57,12 @@
             tr.appendChild(actions);
             document.getElementById("kompaniBody").appendChild(tr);
           });
-        });
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      };
+
+      fetchData();
     </script>
     <style>
       form {

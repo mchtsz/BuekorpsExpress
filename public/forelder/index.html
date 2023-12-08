@@ -1,13 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/png" href="../images/user1.svg" />
-    <title>Forelder page</title>
-</head>
-<body>
-    <h1>Forelder</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../../images/people.svg" />
+    <link rel="stylesheet" href="../../style.css" />
+    <title>Mine barn</title>
+    <script defer>
+      const id = window.location.pathname.split("/").pop();
+      fetch(`/json/barn/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const medlemmer = data.filter((user) => user.rolle === "medlem");
+
+          medlemmer.sort((a, b) => a.id - b.id);
+
+          medlemmer.forEach((user) => {
+            const tr = document.createElement("tr");
+            const id = document.createElement("td");
+            const name = document.createElement("td");
+            const email = document.createElement("td");
+            const rolle = document.createElement("td");
+            id.setAttribute("class", "id");
+            id.innerText = user.id;
+            name.innerText = user.name;
+            email.innerText = user.email;
+            rolle.innerText = user.rolle;
+            tr.appendChild(id);
+            tr.appendChild(name);
+            tr.appendChild(email);
+            tr.appendChild(rolle);
+            document.getElementById("kompaniBody").appendChild(tr);
+          });
+        });
+    </script>
+    <style>
+      #link {
+        position: absolute;
+        bottom: 0;
+        left: 48%;
+        right: 48%;
+        width: 250px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-decoration: none;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body id="editBody">
+    <br />
+    <h1>Mine barn</h1>
+    <table>
+      <thead id="thead">
+        <tr>
+          <th>#</th>
+          <th>Navn</th>
+          <th>Epost</th>
+          <th>Rolle</th>
+        </tr>
+      </thead>
+      <tbody id="kompaniBody"></tbody>
+    </table>
+    <a href="/medlem/" id="link">Gå tilbake</a>
+  </body>
 </html>

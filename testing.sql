@@ -5,13 +5,11 @@ CREATE TABLE IF NOT EXISTS users (
     phone TEXT NOT NULL,
     adress TEXT NOT NULL,
     birthdate TEXT NOT NULL,
-    peletong_id INTEGER,
-    forelder_id INTEGER,
+    peletong_id NUMBER NOT NULL,
+    forelder_id NUMBER NOT NULL,
     email TEXT NOT NULL,
     password TEXT NOT NULL,
-    token TEXT NOT NULL,
-    FOREIGN KEY(peletong_id) REFERENCES peletong(id),
-    FOREIGN KEY(forelder_id) REFERENCES forelder(id)
+    token TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS kompani (
@@ -29,4 +27,10 @@ CREATE TABLE IF NOT EXISTS forelder (
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     token TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS barn (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    forelder_id INTEGER,
+    FOREIGN KEY (forelder_id) REFERENCES forelder(id)
 );

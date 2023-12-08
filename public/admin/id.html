@@ -36,6 +36,14 @@
               <option value="forelder">Forelder</option>
               <option value="medlem">Medlem</option>
             </select>
+
+            <label>Peletong id</label>
+            <input
+              type="number"
+              name="peletong_id"
+              id="peletong_id"
+              placeholder="Peletong id"
+            />
           </div>
           <div>
             <h1>Kontaktinfo</h1>
@@ -58,13 +66,18 @@
               id="birthdate"
               placeholder="Fødselsdato"
             />
+            <label>Forelder id</label>
+            <input
+              type="number"
+              name="forelder_id"
+              id="forelder_id"
+              placeholder="Forelder id"
+            />
           </div>
         </aside>
         <input type="submit" />
       </form>
-      <a href="../">
-        Gå tilbake
-      </a>
+      <a href="../"> Gå tilbake </a>
     </section>
 
     <script defer>
@@ -80,6 +93,8 @@
           document.getElementById("phone").value = user.phone;
           document.getElementById("adress").value = user.adress;
           document.getElementById("birthdate").value = user.birthdate;
+          document.getElementById("peletong_id").value = user.peletong_id;
+          document.getElementById("forelder_id").value = user.forelder_id;
         });
     </script>
   </body>
