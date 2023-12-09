@@ -12,15 +12,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
-function CheckUserPerms(token: string, rolle: string[]) {
-  const user = sql.findByToken.get(token) as any;
-  if (rolle.includes(user.rolle)) {
-    return true;
-  }
-
-  return false;
-}
-
 app.get("/admin/edit/:id", (req, res) => {
   res.sendFile(__dirname + "/public/admin/id.html");
 });
@@ -147,6 +138,7 @@ const sql = {
   deleteUser: db.prepare("DELETE FROM users WHERE id = ?"),
   findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
 };
+
 // TestData
 function createTestData() {
   const hashPassword = (password: any) => {
