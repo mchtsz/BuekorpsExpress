@@ -52,9 +52,12 @@ app.get("/leder/edit/:id", (req, res) => {
 app.get("/leder/", (req, res) => {
   const token = req.cookies.token;
   const user = sql.findByToken.get(token) as any;
-  res.redirect(`/leder/${user.id}`);
+  if (user.rolle === "leder") {
+    res.redirect(`/leder/${user.id}`);
+  } else {
+    res.redirect("/")
+  }
 });
-
 app.get("/leder/:id", (req, res) => {
   res.sendFile(__dirname + "/public/leder/kompani.html");
 });
@@ -490,11 +493,11 @@ app.use((req, res, next) => {
 
   if (req.url.startsWith("/admin")) {
     auth = "admin";
-  } else if (req.url.startsWith(`/leder/}`)) {
+  } else if (req.url.startsWith("/leder/")) {
     auth = "leder";
-  } else if (req.url.startsWith(`/forelder/}`)) {
+  } else if (req.url.startsWith("/forelder/")) {
     auth = "forelder";
-  } else if (req.url.startsWith(`/medlem/`)) {
+  } else if (req.url.startsWith("/medlem/")) {
     auth = "medlem";
   } else {
     return next();
