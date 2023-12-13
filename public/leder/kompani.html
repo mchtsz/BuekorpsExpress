@@ -10,14 +10,16 @@
       const fetchData = async () => {
         try {
           const id = window.location.pathname.split("/")[2];
-          const userRes = await fetch(`/json/user/${id}`);
+          const userRes = await fetch(`/api/user/token`);
           const user = await userRes.json();
 
-          const peletongRes = await fetch(
-            `/json/peletong/${user[0].peletong_id}`
-          );
+          const peletongName = await fetch(`/json/peletong/${id}`);
+          const peletongNameData = await peletongName.json();
+          document.getElementById("peletongName").innerText = peletongNameData[0].name;
+          
+          const peletongRes = await fetch(`/json/peletongusers/${user.data.peletong_id}`);
           const data = await peletongRes.json();
-
+          
           const medlemmer = data.filter((user) => user.rolle === "medlem");
           medlemmer.sort((a, b) => a.id - b.id);
 
@@ -32,20 +34,24 @@
             const editUser = document.createElement("button");
             const deleteForm = document.createElement("form");
             const deleteUser = document.createElement("button");
+
             id.setAttribute("class", "id");
             id.innerText = user.id;
             name.innerText = user.name;
             email.innerText = user.email;
             rolle.innerText = user.rolle;
+
             editUserA.href = `/leder/edit/${user.id}`;
             editUser.innerText = "✏️";
             editUser.setAttribute("class", "btn btn-warning");
             editUser.style.marginRight = "2.5%";
+
             deleteForm.setAttribute("action", `/removeMedlem/${user.id}`);
             deleteForm.setAttribute("method", "POST");
             deleteForm.style.padding = "0";
             deleteUser.innerText = "🗑️";
             deleteUser.setAttribute("class", "btn btn-danger");
+
             tr.appendChild(id);
             tr.appendChild(name);
             tr.appendChild(email);
@@ -55,6 +61,7 @@
             deleteForm.appendChild(deleteUser);
             actions.appendChild(deleteForm);
             tr.appendChild(actions);
+
             document.getElementById("kompaniBody").appendChild(tr);
           });
         } catch (error) {
@@ -85,7 +92,7 @@
   </head>
   <body id="editBody">
     <br />
-    <h1>Mitt kompani</h1>
+    <h1 id="peletongName"></h1>
     <table>
       <thead id="thead">
         <tr>

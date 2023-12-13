@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Medlemmer i buekorps, velg de du vil ha</title>
     <script defer>
+      // Extract the peletong ID from the window location pathname
+      const peletongID = window.location.pathname.split("/")[3];
+
       fetch("/json/peletongNULL")
         .then((res) => res.json())
         .then((data) => {
           const medlemmer = data.filter((user) => user.rolle === "medlem");
-
           medlemmer.sort((a, b) => a.id - b.id);
 
           medlemmer.forEach((user) => {
@@ -21,28 +23,34 @@
             const email = document.createElement("td");
             const rolle = document.createElement("td");
             const actions = document.createElement("td");
-            const deleteForm = document.createElement("form");
-            const deleteUser = document.createElement("button");
+            const addButton = document.createElement("button");
             id.setAttribute("class", "id");
             id.innerText = user.id;
             name.innerText = user.name;
             email.innerText = user.email;
             rolle.innerText = user.rolle;
-            deleteForm.setAttribute("class", "form-class");
-            deleteForm.setAttribute("action", `/addMedlem/${user.id}`);
-            deleteForm.setAttribute("method", "POST");
-            deleteForm.style.padding = "0";
-            deleteUser.innerText = "ADD";
-            deleteUser.setAttribute("class", "btn btn-danger");
-            deleteUser.style.border = "none";
-            deleteUser.style.fontSize = "30px";
-            deleteUser.style.margin = "0";
+            addButton.innerText = "ADD";
+            addButton.setAttribute("class", "btn btn-danger");
+            addButton.style.border = "none";
+            addButton.style.fontSize = "30px";
+            addButton.style.margin = "0";
+            addButton.addEventListener("click", () => {
+              // Send a POST request to add the user to the peletong when the button is clicked
+              fetch(`/addMedlem/${peletongID}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userID: user.id }), // Use the user's ID
+              });
+
+              window.location.pathname="/leder/";
+            });
             tr.appendChild(id);
             tr.appendChild(name);
             tr.appendChild(email);
             tr.appendChild(rolle);
-            deleteForm.appendChild(deleteUser);
-            actions.appendChild(deleteForm);
+            actions.appendChild(addButton);
             tr.appendChild(actions);
             document.getElementById("kompaniBody").appendChild(tr);
           });

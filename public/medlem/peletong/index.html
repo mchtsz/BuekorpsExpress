@@ -7,33 +7,36 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Kompani</title>
     <script defer>
-      const id = window.location.pathname.split("/")[3];
-      console.log(id);
-      fetch(`/json/peletong/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          const medlemmer = data.filter((user) => user.rolle === "medlem" || user.rolle === "leder");
+      async function fetchData() {
+        const userRes = await fetch(`/api/user/token`);
+        const user = await userRes.json();
+        const peletongRes = await fetch(`/json/peletongusers/${user.data.peletong_id}`);
+        const data = await peletongRes.json();
 
-          medlemmer.sort((a, b) => a.id - b.id);
+        const medlemmer = data.filter((user) => user.rolle === "medlem" || user.rolle === "leder");
 
-          medlemmer.forEach((user) => {
-            const tr = document.createElement("tr");
-            const id = document.createElement("td");
-            const name = document.createElement("td");
-            const email = document.createElement("td");
-            const rolle = document.createElement("td");
-            id.setAttribute("class", "id");
-            id.innerText = user.id;
-            name.innerText = user.name;
-            email.innerText = user.email;
-            rolle.innerText = user.rolle;
-            tr.appendChild(id);
-            tr.appendChild(name);
-            tr.appendChild(email);
-            tr.appendChild(rolle);
-            document.getElementById("kompaniBody").appendChild(tr);
-          });
+        medlemmer.sort((a, b) => a.id - b.id);
+
+        medlemmer.forEach((user) => {
+          const tr = document.createElement("tr");
+          const id = document.createElement("td");
+          const name = document.createElement("td");
+          const email = document.createElement("td");
+          const rolle = document.createElement("td");
+          id.setAttribute("class", "id");
+          id.innerText = user.id;
+          name.innerText = user.name;
+          email.innerText = user.email;
+          rolle.innerText = user.rolle;
+          tr.appendChild(id);
+          tr.appendChild(name);
+          tr.appendChild(email);
+          tr.appendChild(rolle);
+          document.getElementById("kompaniBody").appendChild(tr);
         });
+      }
+
+      fetchData();
     </script>
     <style>
 
