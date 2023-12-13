@@ -81,6 +81,7 @@
     </section>
 
     <script defer>
+      // gets id from html and puts it in the form
       const userId = window.location.pathname.split("/").pop();
       fetch("/json/users")
         .then((res) => res.json())

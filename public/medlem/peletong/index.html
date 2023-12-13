@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Kompani</title>
     <script defer>
+      // gets info from api and puts it in the table
       async function fetchData() {
         const userRes = await fetch(`/api/user/token`);
         const user = await userRes.json();
         const peletongRes = await fetch(`/json/peletongusers/${user.data.peletong_id}`);
         const data = await peletongRes.json();
 
+        // sorts the data by id
         const medlemmer = data.filter((user) => user.rolle === "medlem" || user.rolle === "leder");
 
         medlemmer.sort((a, b) => a.id - b.id);
 
+        // puts the data in the table
         medlemmer.forEach((user) => {
           const tr = document.createElement("tr");
           const id = document.createElement("td");
@@ -36,7 +39,7 @@
         });
       }
 
-      fetchData();
+      fetchData(); // runs the function
     </script>
     <style>
 

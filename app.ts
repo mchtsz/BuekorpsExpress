@@ -256,64 +256,64 @@ function createTestData() {
     crypto.randomUUID() // token
   );
   sql.insertUser.run(
-    "medlem",
-    "medlem@test.com",
-    "medlem",
-    hashPassword("Passord01"),
-    "",
-    "",
-    "",
-    "2",
-    "0",
-    crypto.randomUUID()
+    "medlem", // name
+    "medlem@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "", // phone
+    "", // adress
+    "", // birthdate
+    "2", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
   );
   sql.insertUser.run(
-    "ulrik",
-    "ulrik@test.com",
-    "medlem",
-    hashPassword("Passord01"),
-    "",
-    "",
-    "",
-    "1",
-    "3",
-    crypto.randomUUID()
+    "ulrik", // name
+    "ulrik@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "", // phone
+    "", // adress
+    "", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
   );
   sql.insertUser.run(
-    "sigurd",
-    "sigurd@test.com",
-    "medlem",
-    hashPassword("Passord01"),
-    "",
-    "",
-    "",
-    "0",
-    "0",
-    crypto.randomUUID()
+    "sigurd", // name
+    "sigurd@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "", // phone
+    "", // adress
+    "", // birthdate
+    "0", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
   );
   sql.insertUser.run(
-    "emil",
-    "emil@test.com",
-    "medlem",
-    hashPassword("Passord01"),
-    "",
-    "",
-    "",
-    "0",
-    "0",
-    crypto.randomUUID()
+    "emil", // name
+    "emil@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "", // phone
+    "", // adress
+    "", // birthdate
+    "0", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
   );
   sql.insertUser.run(
-    "henrik",
-    "henrik@test.com",
-    "medlem",
-    hashPassword("Passord01"),
-    "",
-    "",
-    "",
-    "1",
-    "3",
-    crypto.randomUUID()
+    "henrik", // name
+    "henrik@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "", // phone
+    "", // adress
+    "", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
   );
 
   // creates peletong

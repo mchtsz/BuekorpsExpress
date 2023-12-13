@@ -12,10 +12,13 @@
 
       fetch("/json/peletongNULL")
         .then((res) => res.json())
+        // Get the data from the API
         .then((data) => {
+          // Sort the data by ID
           const medlemmer = data.filter((user) => user.rolle === "medlem");
           medlemmer.sort((a, b) => a.id - b.id);
-
+          
+          // Put the data in the table
           medlemmer.forEach((user) => {
             const tr = document.createElement("tr");
             const id = document.createElement("td");

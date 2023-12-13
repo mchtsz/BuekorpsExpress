@@ -36,6 +36,7 @@
       </a>
     </section>
     <script defer>
+      // gets id from html and puts it in the form
       const form = {
         id: document.getElementById("id"),
         rolle: document.getElementById("rolle"),
@@ -45,7 +46,8 @@
         adress: document.getElementById("adress"),
         birthdate: document.getElementById("birthdate"),
       };
-
+      
+      // gets info from api and puts it in the form
       async function getInfo() {
         const res = await fetch("/api/user/token");
         const data = await res.json();

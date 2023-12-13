@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../style.css" />
     <title>Mine barn</title>
     <script defer>
+      // gets info from api and puts it in the table
       const id = window.location.pathname.split("/").pop();
       fetch(`/json/barn/${id}`)
         .then((res) => res.json())
