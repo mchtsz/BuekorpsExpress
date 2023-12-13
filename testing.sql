@@ -28,9 +28,3 @@ CREATE TABLE IF NOT EXISTS forelder (
     password TEXT NOT NULL,
     token TEXT NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS barn (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    forelder_id INTEGER,
-    FOREIGN KEY (forelder_id) REFERENCES forelder(id)
-);

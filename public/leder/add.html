@@ -32,7 +32,7 @@
             deleteForm.setAttribute("action", `/addMedlem/${user.id}`);
             deleteForm.setAttribute("method", "POST");
             deleteForm.style.padding = "0";
-            deleteUser.innerText = "+";
+            deleteUser.innerText = "ADD";
             deleteUser.setAttribute("class", "btn btn-danger");
             deleteUser.style.border = "none";
             deleteUser.style.fontSize = "30px";
@@ -68,5 +68,6 @@
       </thead>
       <tbody id="kompaniBody"></tbody>
     </table>
+    <a href="/leder/" id="eBtn"> Gå tilbake </a>
   </body>
 </html>

@@ -43,7 +43,7 @@ app.get("/leder/edit/:id", (req, res) => {
 app.get("/leder/", (req, res) => {
   const token = req.cookies.token;
   const user = sql.findByToken.get(token) as any;
-  if (user.rolle === "leder") {
+  if (user.rolle === "leder" || user.rolle === "admin") {
     res.redirect(`/leder/${user.id}`);
   } else {
     res.redirect("/")
@@ -97,14 +97,16 @@ app.get("/json/peletongNULL", (req, res) => {
   res.send(peletong);
 });
 
+app.get("/forelder/", (req, res) => {
+  const user = sql.findByToken.get(req.cookies.token) as any;
+  const userForelderID = user.forelder_id;
+  res.redirect(`/forelder/${userForelderID}`);
+})
+
 app.get("/json/barn/:id", (req, res) => {
   const { id } = req.params;
   const barn = db.prepare(`SELECT * FROM barn`).all(id);
   res.send(barn);
-});
-
-app.get("/livsglede", (req, res) => {
-  res.sendFile(__dirname + "/public/livsglede.html");
 });
 
 app.get("/api/user/token", (req, res) => {
@@ -154,8 +156,8 @@ function createTestData() {
     "",
     "",
     "",
-    "0",
-    "0",
+    "1",
+    "3",
     crypto.randomUUID()
   );
   sql.insertUser.run(
@@ -166,7 +168,19 @@ function createTestData() {
     "",
     "",
     "",
+    "1",
     "0",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "fenrik",
+    "fenrik@test.com",
+    "leder",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "2",
     "0",
     crypto.randomUUID()
   );
@@ -178,8 +192,8 @@ function createTestData() {
     "",
     "",
     "",
-    "0",
-    "0",
+    "1",
+    "3",
     crypto.randomUUID()
   );
   sql.createParent.run(
@@ -196,11 +210,60 @@ function createTestData() {
     "",
     "",
     "",
+    "2",
+    "0",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "ulrik",
+    "ulrik@test.com",
+    "medlem",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "1",
+    "3",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "sigurd",
+    "sigurd@test.com",
+    "medlem",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
     "0",
     "0",
     crypto.randomUUID()
   );
+  sql.insertUser.run(
+    "emil",
+    "emil@test.com",
+    "medlem",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "0",
+    "0",
+    crypto.randomUUID()
+  );
+  sql.insertUser.run(
+    "henrik",
+    "henrik@test.com",
+    "medlem",
+    hashPassword("Passord01"),
+    "",
+    "",
+    "",
+    "1",
+    "3",
+    crypto.randomUUID()
+  );
   sql.createPeletong.run("Peletong 1");
+  sql.createPeletong.run("Fenrik skvadron");
 }
 
 app.post("/login", (req, res) => {
@@ -255,7 +318,7 @@ app.post("/createUser", (req, res) => {
     const hash = bcrypt.hashSync(password, 6);
 
     const insertUser = () => {
-      sql.insertUser.run(name, email, rolle, hash, "", "", "", "0", "0", token);
+      sql.insertUser.run(name, email, rolle, hash, "", "", "", "1", "0", token);
     };
 
     switch (rolle) {
