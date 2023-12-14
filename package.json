@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "clear && tsx watch app.ts"
+    "start": "cls && tsx watch app.ts"
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.8",
