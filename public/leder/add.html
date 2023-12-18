@@ -21,16 +21,11 @@
           // Put the data in the table
           medlemmer.forEach((user) => {
             const tr = document.createElement("tr");
-            const id = document.createElement("td");
             const name = document.createElement("td");
-            const email = document.createElement("td");
             const rolle = document.createElement("td");
             const actions = document.createElement("td");
             const addButton = document.createElement("button");
-            id.setAttribute("class", "id");
-            id.innerText = user.id;
             name.innerText = user.name;
-            email.innerText = user.email;
             rolle.innerText = user.rolle;
             addButton.innerText = "ADD";
             addButton.setAttribute("class", "btn btn-danger");
@@ -49,9 +44,7 @@
 
               window.location.pathname="/leder/";
             });
-            tr.appendChild(id);
             tr.appendChild(name);
-            tr.appendChild(email);
             tr.appendChild(rolle);
             actions.appendChild(addButton);
             tr.appendChild(actions);
@@ -70,15 +63,13 @@
     <table>
       <thead id="thead">
         <tr>
-          <th>#</th>
           <th>Navn</th>
-          <th>E-post</th>
           <th>Rolle</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody id="kompaniBody"></tbody>
     </table>
-    <a href="/leder/" id="eBtn"> Gå tilbake </a>
+    <a href="/leder/" id="eBtn">Gå tilbake</a>
   </body>
 </html>

@@ -24,11 +24,12 @@
           const medlemmer = data.filter((user) => user.rolle === "medlem");
           medlemmer.sort((a, b) => a.id - b.id);
 
+          console.log(user)
+
           medlemmer.forEach((user) => {
             const tr = document.createElement("tr");
-            const id = document.createElement("td");
             const name = document.createElement("td");
-            const email = document.createElement("td");
+            const phone = document.createElement("td");
             const rolle = document.createElement("td");
             const actions = document.createElement("td");
             const editUserA = document.createElement("a");
@@ -36,10 +37,8 @@
             const deleteForm = document.createElement("form");
             const deleteUser = document.createElement("button");
 
-            id.setAttribute("class", "id");
-            id.innerText = user.id;
             name.innerText = user.name;
-            email.innerText = user.email;
+            phone.innerText = user.phone;
             rolle.innerText = user.rolle;
 
             editUserA.href = `/leder/edit/${user.id}`;
@@ -53,9 +52,8 @@
             deleteUser.innerText = "🗑️";
             deleteUser.setAttribute("class", "btn btn-danger");
 
-            tr.appendChild(id);
             tr.appendChild(name);
-            tr.appendChild(email);
+            tr.appendChild(phone);
             tr.appendChild(rolle);
             editUserA.appendChild(editUser);
             actions.appendChild(editUserA);
@@ -97,15 +95,14 @@
     <table>
       <thead id="thead">
         <tr>
-          <th>#</th>
           <th>Navn</th>
-          <th>E-post</th>
+          <th>Telefon</th>
           <th>Rolle</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody id="kompaniBody"></tbody>
     </table>
-    <a href="/leder/add/" id="eBtn">+</a>
+    <a href="/leder/add/" id="eBtn">Legg til +</a>
   </body>
 </html>

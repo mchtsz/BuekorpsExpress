@@ -11,39 +11,17 @@
     <style>
       section {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         height: 100vh;
         gap: 2rem;
       }
 
-      a {
-        position: absolute;
-        bottom: 0;
-        left: 45%;
-        right: 45%;
-        display: flex;
-        flex-direction: row;
-        width: 350px;
-        align-items: center;
-        text-decoration: none;
-        color: #fff;
-      }
     </style>
     <section>
       <!-- Two forms, one that Creates Peletong and another that "adds peletong" into kompani, atm second fornm is deprecated-->
       <form action="/createPeletong" method="POST">
         <h1>Peletong</h1>
         <input type="text" name="name" id="name" placeholder="Fult navn" />
-        <input type="submit" />
-      </form>
-      <form action="deprecated">
-        <h1>Legg peletong inn i kompani</h1>
-        <input
-          type="text"
-          name="kompani"
-          id="kompani"
-          placeholder="eks: Kompani"
-        />
         <input type="submit" />
       </form>
       <a href="/admin/"> Gå tilbake </a>

@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import crypto from "crypto";
 
+// using app and db
 const app = express();
 const db = new Database("database.db");
 
@@ -13,6 +14,257 @@ const db = new Database("database.db");
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser()); // always use cookieParser or bodyParser
+
+// SQL statements
+const sql = {
+  // inserts a user into the database with the given values
+  insertUser: db.prepare(
+    `INSERT INTO users (name, email, rolle, password, phone, adress, birthdate, peletong_id, forelder_id, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+  ),
+
+  // creates a parent in the database with the given values
+  createParent: db.prepare(
+    `INSERT INTO forelder (name, email, password, token) VALUES (?, ?, ?, ?);`
+  ),
+
+  // creates a peletong in the database with the given values
+  createPeletong: db.prepare(`INSERT INTO peletong (name) VALUES (?);`),
+
+  // updates the peletong_id of a user
+  updateMedlemPeletong: db.prepare(
+    `UPDATE users SET peletong_id = ? WHERE id = ?`
+  ),
+
+  // updates the forelder_id of a user
+  updateForelderID: db.prepare(`UPDATE users SET forelder_id = ? WHERE id = ?`),
+
+  // removes a user from a peletong by setting their peletong_id to 0
+  removeMedlem: db.prepare(`UPDATE users SET peletong_id = 0 WHERE id = ?`),
+
+  // deletes a user from the database
+  deleteUser: db.prepare("DELETE FROM users WHERE id = ?"),
+
+  // finds a user by their token
+  findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
+};
+
+// Function for creating test data
+function createTestData() {
+  const hashPassword = (password: any) => {
+    const saltRounds = 6;
+    return bcrypt.hashSync(password, saltRounds);
+  };
+  ("");
+  sql.insertUser.run(
+    "admin", // name
+    "admin@test.com", //email
+    "admin", // role
+    hashPassword("Passord01"), // password
+    "+1 888 333", // phone
+    "1 st. Avenue", // adress
+    "1990-01-01", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "leder", // name
+    "leder@test.com", // email
+    "leder", // role
+    hashPassword("Passord01"), // password
+    "+98 90 90 20", // phone
+    "2nd St. Avenue", // adress
+    "1991-01-10", // birthdate
+    "1", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "fenrik", // name
+    "fenrik@test.com", // email
+    "leder", // role
+    hashPassword("Passord01"), // password
+    "+47 98 90 78 20", // phone
+    "Haglevegen 7", // adress
+    "1987-03-24", // birthdate
+    "2", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "forelder", // name
+    "forelder@test.com", // email
+    "forelder", // role
+    hashPassword("Passord01"), // password
+    "+90 13 34 54 20", // phone
+    "Erlevegen 7", // adress
+    "2000-02-05", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.createParent.run(
+    "forelder", // name
+    "forelder@test.com", // email
+    hashPassword("Passord01"), // password
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "medlem", // name
+    "medlem@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "+0 00 90 30 40", // phone
+    "Optikervegen 8", // adress
+    "2001-01-01", // birthdate
+    "2", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "ulrik", // name
+    "ulrik@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "+47 99 88 77 66", // phone
+    "Straumevegen 90", // adress
+    "2004-05-06", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "sigurd", // name
+    "sigurd@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "+47 98 98 98 00", // phone
+    "Våkleiven 9", // adress
+    "2006-02-05", // birthdate
+    "0", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "emil", // name
+    "emil@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "+98 99 88 77 44", // phone
+    "HopeRoad 2", // adress
+    "2000-00-00", // birthdate
+    "0", // peletong_id
+    "0", // forelder_id
+    crypto.randomUUID() // token
+  );
+  sql.insertUser.run(
+    "henrik", // name
+    "henrik@test.com", // email
+    "medlem", // role
+    hashPassword("Passord01"), // password
+    "+47 89 98 24 99", // phone
+    "Henriks vei 8", // adress
+    "2009-09-09", // birthdate
+    "1", // peletong_id
+    "3", // forelder_id
+    crypto.randomUUID() // token
+  );
+
+  // creates peletong
+  sql.createPeletong.run("Peletong 1");
+  sql.createPeletong.run("Fenrik skvadron");
+}
+
+// login post
+app.post("/login", (req, res) => {
+  const { email, password } = req.body; // gets the email and password from the request body
+  const user = db
+    .prepare("SELECT * FROM users WHERE email = ?")
+    .get(email) as any;
+
+  // if the user does not exist, send a 401 status code
+  if (!user) {
+    res.status(401).send("Invalid email or password");
+    return;
+  }
+
+  // compares the password from the request body with the password in the database
+  const compare = bcrypt.compareSync(password, user.password);
+
+  if (compare) {
+    res.cookie("token", user.token, {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+    });
+
+    // redirects the user to the correct page based on their role
+    switch (user.rolle) {
+      case "admin":
+        res.redirect("/admin/");
+        break;
+      case "leder":
+        res.redirect(`/leder/`);
+        break;
+      case "forelder":
+        res.redirect(`/forelder/`);
+        break;
+      case "medlem":
+        res.redirect("/medlem/");
+        break;
+      default:
+        res.redirect("/");
+        break;
+    }
+  } else {
+    res.status(401).send("Invalid email or password");
+  }
+});
+
+// middleware for checking if the user is logged in
+app.use((req, res, next) => {
+  let auth = "";
+  const token = req.cookies.token;
+
+  // Skip middleware for the index page and static files
+  if (
+    req.url === "/" ||
+    req.url === "/index.html" ||
+    req.url.endsWith(".css") ||
+    req.url.endsWith(".js")
+  ) {
+    return next();
+  }
+
+  // if the user has no token, redirect to the index page
+  if (!token) {
+    res.redirect("/");
+    return;
+  }
+
+  const user = sql.findByToken.get(token) as any;
+
+  if (user.rolle === "admin") {
+    return next();
+  }
+
+  if (req.url.startsWith("/admin")) {
+    auth = "admin";
+  } else if (req.url.startsWith("/leder/")) {
+    auth = "leder";
+  } else if (req.url.startsWith("/forelder/")) {
+    auth = "forelder";
+  } else if (req.url.startsWith("/medlem/")) {
+    auth = "medlem";
+  } else {
+    return next();
+  }
+
+  if (user.rolle === auth) {
+    next();
+  } else {
+    res.redirect("/");
+  }
+});
 
 // Admin routes
 const adminRoutes = {
@@ -33,8 +285,10 @@ const adminRoutes = {
 // Forelder routes
 const forelderRoutes = {
   index: (req, res) => {
-    const user = sql.findByToken.get(req.cookies.token) as any;
+    const token = req.cookies.token;
+    const user = sql.findByToken.get(token) as any;
     const userForelderID = user.forelder_id;
+
     res.redirect(`/forelder/${userForelderID}`);
   },
   id: (req, res) => {
@@ -47,6 +301,7 @@ const lederRoutes = {
   index: (req, res) => {
     const token = req.cookies.token;
     const user = sql.findByToken.get(token) as any;
+
     if (user.rolle === "leder" || user.rolle === "admin") {
       res.redirect(`/leder/${user.peletong_id}`);
     } else {
@@ -90,12 +345,12 @@ const jsonRoutes = {
   },
   peletong: (req, res) => {
     const id = req.params.id;
-    const peletong = db.prepare(`SELECT * FROM peletong WHERE id=?`).all(id);
+    const peletong = db.prepare(`SELECT name FROM peletong WHERE id=?`).all(id);
     res.send(peletong);
   },
   peletongNULL: (req, res) => {
     const peletong = db
-      .prepare(`SELECT * FROM users WHERE peletong_id = 0`)
+      .prepare(`SELECT name, rolle, id FROM users WHERE peletong_id = 0`)
       .all();
     res.send(peletong);
   },
@@ -160,209 +415,6 @@ app.get("/json/peletongNULL", jsonRoutes.peletongNULL);
 app.get("/json/peletongusers/:id", jsonRoutes.peletongusers);
 app.get("/json/user/:id", jsonRoutes.user);
 app.get("/json/users", jsonRoutes.users);
-
-// SQL statements
-const sql = {
-  // inserts a user into the database with the given values
-  insertUser: db.prepare(
-    `INSERT INTO users (name, email, rolle, password, phone, adress, birthdate, peletong_id, forelder_id, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
-  ),
-
-  // creates a parent in the database with the given values
-  createParent: db.prepare(
-    `INSERT INTO forelder (name, email, password, token) VALUES (?, ?, ?, ?);`
-  ),
-
-  // creates a peletong in the database with the given values
-  createPeletong: db.prepare(`INSERT INTO peletong (name) VALUES (?);`),
-
-  // updates the peletong_id of a user
-  updateMedlemPeletong: db.prepare(
-    `UPDATE users SET peletong_id = ? WHERE id = ?`
-  ),
-
-  // updates the forelder_id of a user
-  updateForelderID: db.prepare(`UPDATE users SET forelder_id = ? WHERE id = ?`),
-
-  // removes a user from a peletong by setting their peletong_id to 0
-  removeMedlem: db.prepare(`UPDATE users SET peletong_id = 0 WHERE id = ?`),
-
-  // deletes a user from the database
-  deleteUser: db.prepare("DELETE FROM users WHERE id = ?"),
-
-  // finds a user by their token
-  findByToken: db.prepare("SELECT * FROM users WHERE token = ?"),
-};
-
-// Function for creating test data
-function createTestData() {
-  const hashPassword = (password: any) => {
-    const saltRounds = 6;
-    return bcrypt.hashSync(password, saltRounds);
-  };
-  ("");
-  sql.insertUser.run(
-    "admin", // name
-    "admin@test.com", //email
-    "admin", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "1", // peletong_id
-    "3", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "leder", // name
-    "leder@test.com", // email
-    "leder", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "1", // peletong_id
-    "0", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "fenrik", // name
-    "fenrik@test.com", // email
-    "leder", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "2", // peletong_id
-    "0", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "forelder", // name
-    "forelder@test.com", // email
-    "forelder", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "1", // peletong_id
-    "3", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.createParent.run(
-    "forelder", // name
-    "forelder@test.com", // email
-    hashPassword("Passord01"), // password
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "medlem", // name
-    "medlem@test.com", // email
-    "medlem", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "2", // peletong_id
-    "0", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "ulrik", // name
-    "ulrik@test.com", // email
-    "medlem", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "1", // peletong_id
-    "3", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "sigurd", // name
-    "sigurd@test.com", // email
-    "medlem", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "0", // peletong_id
-    "0", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "emil", // name
-    "emil@test.com", // email
-    "medlem", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "0", // peletong_id
-    "0", // forelder_id
-    crypto.randomUUID() // token
-  );
-  sql.insertUser.run(
-    "henrik", // name
-    "henrik@test.com", // email
-    "medlem", // role
-    hashPassword("Passord01"), // password
-    "", // phone
-    "", // adress
-    "", // birthdate
-    "1", // peletong_id
-    "3", // forelder_id
-    crypto.randomUUID() // token
-  );
-
-  // creates peletong
-  sql.createPeletong.run("Peletong 1");
-  sql.createPeletong.run("Fenrik skvadron");
-}
-app.post("/login", (req, res) => {
-  const { email, password } = req.body; // gets the email and password from the request body
-  const user = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email) as any;
-
-  // if the user does not exist, send a 401 status code
-  if (!user) {
-    res.status(401).send("Invalid email or password");
-    return;
-  }
-
-  // compares the password from the request body with the password in the database
-  const compare = bcrypt.compareSync(password, user.password);
-
-  if (compare) {
-    res.cookie("token", user.token, {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-    });
-
-    // redirects the user to the correct page based on their role
-    switch (user.rolle) {
-      case "admin":
-        res.redirect("/admin/");
-        break;
-      case "leder":
-        res.redirect(`/leder/`);
-        break;
-      case "forelder":
-        res.redirect(`/forelder/`);
-        break;
-      case "medlem":
-        res.redirect("/medlem/");
-        break;
-      default:
-        res.redirect("/");
-        break;
-    }
-  } else {
-    res.status(401).send("Invalid email or password");
-  }
-});
 
 app.post("/createUser", (req, res) => {
   const { name, email, rolle, password } = req.body; // gets the email and password from the request body
@@ -590,52 +642,7 @@ app.post("/post/redigerKontakt", (req, res) => {
   }
 });
 
-// middleware for checking if the user is logged in
-app.use((req, res, next) => {
-  let auth = "";
-  const token = req.cookies.token;
-
-  // Skip middleware for the index page and static files
-  if (
-    req.url === "/" ||
-    req.url === "/index.html" ||
-    req.url.endsWith(".css") ||
-    req.url.endsWith(".js")
-  ) {
-    return next();
-  }
-
-  // if the user has no token, redirect to the index page
-  if (!token) {
-    res.redirect("/");
-    return;
-  }
-
-  const user = sql.findByToken.get(token) as any;
-
-  if (user.rolle === "admin") {
-    return next();
-  }
-
-  if (req.url.startsWith("/admin")) {
-    auth = "admin";
-  } else if (req.url.startsWith("/leder/")) {
-    auth = "leder";
-  } else if (req.url.startsWith("/forelder/")) {
-    auth = "forelder";
-  } else if (req.url.startsWith("/medlem/")) {
-    auth = "medlem";
-  } else {
-    return next();
-  }
-
-  if (user.rolle === auth) {
-    next();
-  } else {
-    res.redirect("/");
-  }
-});
-
+// bruker public mappen
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.listen(3000, () => {

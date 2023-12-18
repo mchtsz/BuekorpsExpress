@@ -18,37 +18,16 @@
 
           medlemmer.forEach((user) => {
             const tr = document.createElement("tr");
-            const id = document.createElement("td");
             const name = document.createElement("td");
-            const email = document.createElement("td");
             const rolle = document.createElement("td");
-            id.setAttribute("class", "id");
-            id.innerText = user.id;
             name.innerText = user.name;
-            email.innerText = user.email;
             rolle.innerText = user.rolle;
-            tr.appendChild(id);
             tr.appendChild(name);
-            tr.appendChild(email);
             tr.appendChild(rolle);
-            document.getElementById("kompaniBody").appendChild(tr);
+            document.getElementById("barnBody").appendChild(tr);
           });
         });
     </script>
-    <style>
-      #link {
-        position: absolute;
-        bottom: 0;
-        left: 48%;
-        right: 48%;
-        width: 250px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        text-decoration: none;
-        color: #fff;
-      }
-    </style>
   </head>
   <body id="editBody">
     <br />
@@ -56,13 +35,11 @@
     <table>
       <thead id="thead">
         <tr>
-          <th>#</th>
           <th>Navn</th>
-          <th>Epost</th>
           <th>Rolle</th>
         </tr>
       </thead>
-      <tbody id="kompaniBody"></tbody>
+      <tbody id="barnBody"></tbody>
     </table>
   </body>
 </html>

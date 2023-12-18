@@ -222,9 +222,7 @@ section a img {
   transition: 0.2s ease-in-out;
   text-align: center;
   color: #fff;
-  font-size: 40px;
-  border-radius: 5px;
-  background-color: transparent;
+  font-size: 26px;
 }
 
 #editBody #eBtn:hover {
@@ -250,18 +248,18 @@ td {
 th {
   border-bottom: 0.1px solid #ccc;
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 td {
-  font-size: 16px;
+  font-size: 18px;
   color: #fff;
 }
 
 th,
 td {
-  padding: 15px;
-  text-align: left;
+  padding: 1.2rem;
+  text-align: center;
 }
 
 .btn {
