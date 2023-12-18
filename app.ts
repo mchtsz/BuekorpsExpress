@@ -340,7 +340,7 @@ const medlemRoutes = {
 const jsonRoutes = {
   barn: (req, res) => {
     const { id } = req.params;
-    const barn = db.prepare(`SELECT * FROM users WHERE forelder_id=?`).all(id);
+    const barn = db.prepare(`SELECT name, rolle FROM users WHERE forelder_id=?`).all(id);
     res.send(barn);
   },
   peletong: (req, res) => {
@@ -357,7 +357,7 @@ const jsonRoutes = {
   peletongusers: (req, res) => {
     const { id } = req.params;
     const peletongusers = db
-      .prepare(`SELECT * FROM users WHERE peletong_id =?`)
+      .prepare(`SELECT name, phone, rolle FROM users WHERE peletong_id =?`)
       .all(id);
     res.send(peletongusers);
   },
