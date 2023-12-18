@@ -350,14 +350,14 @@ const jsonRoutes = {
   },
   peletongNULL: (req, res) => {
     const peletong = db
-      .prepare(`SELECT name, rolle, id FROM users WHERE peletong_id = 0`)
+      .prepare(`SELECT * FROM users WHERE peletong_id = 0`)
       .all();
     res.send(peletong);
   },
   peletongusers: (req, res) => {
     const { id } = req.params;
     const peletongusers = db
-      .prepare(`SELECT name, phone, rolle FROM users WHERE peletong_id =?`)
+      .prepare(`SELECT * FROM users WHERE peletong_id =?`)
       .all(id);
     res.send(peletongusers);
   },
